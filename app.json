@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "opencloud-ios",
-    "slug": "opencloud-ios",
+    "name": "opencloud-mobile",
+    "slug": "opencloud-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,14 +10,14 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.opencloud-ios"
+      "bundleIdentifier": "com.anonymous.opencloud-mobile"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.opencloudios"
+      "package": "com.anonymous.opencloudmobile"
     },
     "web": {
       "bundler": "metro",

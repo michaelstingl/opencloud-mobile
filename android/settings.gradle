@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'opencloud-ios'
+rootProject.name = 'opencloud-mobile'
 
 dependencyResolutionManagement {
   versionCatalogs {

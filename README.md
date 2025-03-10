@@ -1,6 +1,6 @@
-# OpenCloud iOS
+# OpenCloud Mobile
 
-A mobile iOS client for connecting to Nextcloud/ownCloud servers.
+A mobile client for iOS and Android for connecting to OpenCloud servers.
 
 ## Get started
 
@@ -39,5 +39,9 @@ The app is built with:
 To create a production build:
 
 ```bash
+# For iOS
 npx expo run:ios --configuration Release
+
+# For Android
+npx expo run:android --variant release
 ```

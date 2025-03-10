@@ -1,4 +1,4 @@
-package com.anonymous.opencloudios
+package com.anonymous.opencloudmobile
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

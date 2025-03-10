@@ -1,4 +1,4 @@
-package com.anonymous.opencloudios
+package com.anonymous.opencloudmobile
 
 import android.app.Application
 import android.content.res.Configuration
