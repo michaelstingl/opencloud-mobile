@@ -29,6 +29,8 @@ Service modules handle external communication and data processing:
 
 - **API Service** - Handles communication with the OpenCloud server
 - **Auth Service** - Manages authentication and authorization
+  - **WebFingerService** - Handles WebFinger discovery for OpenID Connect
+  - **OidcService** - Handles OpenID Connect operations and configuration
 - **Storage Service** - Handles local storage and caching
 - **File Service** - Manages file operations
 
@@ -48,3 +50,6 @@ TypeScript type definitions for the app's data structures:
 - **User Types** - User-related type definitions
 - **File Types** - File and folder type definitions
 - **API Types** - Types for API requests and responses
+- **Auth Types**:
+  - **WebFinger** - Types for WebFinger responses and links
+  - **OIDC** - Types for OpenID Connect configuration

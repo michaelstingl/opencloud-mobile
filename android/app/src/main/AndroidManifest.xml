@@ -27,6 +27,7 @@
         <data android:scheme="myapp"/>
         <data android:scheme="com.anonymous.opencloudmobile"/>
         <data android:scheme="exp+opencloud-mobile"/>
+        <data android:scheme="oc"/>
       </intent-filter>
     </activity>
   </application>

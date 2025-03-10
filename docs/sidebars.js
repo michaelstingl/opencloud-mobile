@@ -18,6 +18,8 @@ module.exports = {
       label: 'Guides',
       items: [
         'guides/getting-started',
+        'guides/configuration',
+        'guides/authentication',
       ],
     },
     {
