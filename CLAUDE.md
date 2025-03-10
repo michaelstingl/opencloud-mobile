@@ -13,6 +13,11 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Run single test: `jest -t "test name"`
 - Lint code: `npx expo lint`
 
+## Documentation
+- Documentation is available at: https://michaelstingl.github.io/opencloud-mobile/
+- Run documentation locally: `cd docs && npm start`
+- Build documentation: `cd docs && npm run build`
+
 ## Project Structure
 - `/app` - Main application screens and navigation (using expo-router)
 - `/components` - Reusable UI components
