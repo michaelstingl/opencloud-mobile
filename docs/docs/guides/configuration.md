@@ -42,8 +42,8 @@ Authentication settings control how the app interacts with OpenID Connect provid
 
 | Option | Description | Default Value |
 |--------|-------------|---------------|
-| `clientId` | OAuth client ID | iOS: `OpenCloudIOS`<br>Android: `OpenCloudAndroid` |
-| `redirectUri` | OAuth redirect URI | iOS: `oc://ios.opencloud.eu`<br>Android: `oc://android.opencloud.eu` |
+| `clientId` | OAuth client ID | iOS: `OpenCloudIOS`<br/>Android: `OpenCloudAndroid` |
+| `redirectUri` | OAuth redirect URI | iOS: `oc://ios.opencloud.eu`<br/>Android: `oc://android.opencloud.eu` |
 | `defaultScopes` | Default OAuth scopes to request | `openid profile email` |
 
 ### API Configuration
