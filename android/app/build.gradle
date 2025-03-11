@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.opencloudios'
+    namespace 'com.anonymous.opencloudmobile'
     defaultConfig {
-        applicationId 'com.anonymous.opencloudios'
+        applicationId 'com.anonymous.opencloudmobile'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

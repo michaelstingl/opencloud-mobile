@@ -25,8 +25,8 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
-        <data android:scheme="com.anonymous.opencloudios"/>
-        <data android:scheme="exp+opencloud-ios"/>
+        <data android:scheme="com.anonymous.opencloudmobile"/>
+        <data android:scheme="exp+opencloud-mobile"/>
       </intent-filter>
     </activity>
   </application>

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "opencloudios.app"
-               BlueprintName = "opencloudios"
-               ReferencedContainer = "container:opencloudios.xcodeproj">
+               BuildableName = "opencloudmobile.app"
+               BlueprintName = "opencloudmobile"
+               ReferencedContainer = "container:opencloudmobile.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "opencloudiosTests.xctest"
-               BlueprintName = "opencloudiosTests"
-               ReferencedContainer = "container:opencloudios.xcodeproj">
+               BuildableName = "opencloudmobileTests.xctest"
+               BlueprintName = "opencloudmobileTests"
+               ReferencedContainer = "container:opencloudmobile.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "opencloudios.app"
-            BlueprintName = "opencloudios"
-            ReferencedContainer = "container:opencloudios.xcodeproj">
+            BuildableName = "opencloudmobile.app"
+            BlueprintName = "opencloudmobile"
+            ReferencedContainer = "container:opencloudmobile.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "opencloudios.app"
-            BlueprintName = "opencloudios"
-            ReferencedContainer = "container:opencloudios.xcodeproj">
+            BuildableName = "opencloudmobile.app"
+            BlueprintName = "opencloudmobile"
+            ReferencedContainer = "container:opencloudmobile.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

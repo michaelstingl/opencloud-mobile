@@ -1,7 +1,7 @@
-# Development Guidelines for OpenCloud iOS
+# Development Guidelines for OpenCloud Mobile
 
 ## About the Project
-OpenCloud iOS is a mobile client for connecting to Nextcloud/ownCloud servers. The app allows users to access their cloud files, share content, and sync data between their iOS device and server.
+OpenCloud Mobile is a cross-platform mobile client for iOS and Android that connects to OpenCloud servers. The app allows users to access their cloud files, share content, and sync data between their mobile devices and server.
 
 ## Build & Development Commands
 - Start development server: `npx expo start` or `expo start`
