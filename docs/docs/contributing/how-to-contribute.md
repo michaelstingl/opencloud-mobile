@@ -81,6 +81,47 @@ Before submitting your changes, make sure to run the tests:
 npm test
 ```
 
+### Writing Tests
+
+We use Jest for testing. When adding new features, please include appropriate tests:
+
+1. **Unit Tests** for individual functions and components
+2. **Integration Tests** for features that span multiple components
+3. **Snapshot Tests** for UI components
+
+Tests should be placed in `__tests__` directories next to the code they're testing. Test files should follow the naming pattern `ComponentName-test.tsx` or `ServiceName-test.ts`.
+
+Example test structure:
+
+```typescript
+import { YourService } from '../YourService';
+
+// Mock external dependencies
+jest.mock('../OtherService');
+global.fetch = jest.fn();
+
+describe('YourService', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('methodName', () => {
+    it('should do something specific', () => {
+      // Arrange
+      // ...
+      
+      // Act
+      const result = YourService.methodName();
+      
+      // Assert
+      expect(result).toBe(expectedValue);
+    });
+  });
+});
+```
+
+For examples, see the authentication service tests in `services/__tests__/`.
+
 ## Pull Request Process
 
 1. Update the README.md or documentation with details of your changes if needed
