@@ -14,11 +14,14 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Run tests with coverage: `jest --coverage`
 - Lint code: `npx expo lint`
 - Format code: `prettier --write "**/*.{ts,tsx}"`
+- Check for security vulnerabilities: `npm audit`
+- Fix automatic security issues: `npm audit fix`
 
 ## Documentation
 - Documentation is available at: https://michaelstingl.github.io/opencloud-mobile/
 - Run documentation locally: `cd docs && npm start`
 - Build documentation: `cd docs && npm run build`
+- The documentation uses Docusaurus v3 without blog functionality
 
 ## Project Structure
 - `/app` - Main application screens and navigation (using expo-router)
@@ -85,3 +88,11 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Use descriptive branch names (e.g., `feature/login-screen`, `fix/connection-error`)
 - Write clear commit messages that describe what and why
 - Create pull requests for code review before merging to `main`
+
+## Security Practices
+- Dependencies are regularly updated to fix security vulnerabilities
+- Main project uses latest compatible versions of Expo and React Native
+- Documentation site uses Docusaurus v3 with current dependencies
+- Run `npm audit` periodically to check for new vulnerabilities
+- For low risk vulnerabilities in transitive dependencies that cannot be fixed, review case-by-case
+- Security updates should be prioritized over feature development
