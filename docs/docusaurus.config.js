@@ -24,12 +24,6 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           // Please change this to your repo.
           editUrl: 'https://github.com/michaelstingl/opencloud-mobile/edit/main/docs/',
         },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/michaelstingl/opencloud-mobile/edit/main/docs/blog/',
-        },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
