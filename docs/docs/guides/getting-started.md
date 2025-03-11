@@ -73,6 +73,20 @@ Run the app in a web browser:
 npx expo start --web
 ```
 
+## Connecting to a Server
+
+When you launch the app, you'll need to connect to an OpenCloud server:
+
+1. Enter the server URL (e.g., `https://your-server.com`)
+2. Tap "Connect"
+3. The app will:
+   - Check if the server supports OpenID Connect via WebFinger
+   - Fetch the OpenID Connect configuration
+   - Redirect you to the server's login page
+4. After login, you'll be redirected back to the app
+
+For development and testing, you can use any OpenCloud server that supports OpenID Connect authentication.
+
 ## Development Workflow
 
 ### Project Structure

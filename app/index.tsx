@@ -1,13 +1,73 @@
 import { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { AuthService } from "../services/AuthService";
+import * as WebBrowser from 'expo-web-browser';
 
 export default function Index() {
   const [serverUrl, setServerUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleConnect = () => {
-    console.log("Connecting to:", serverUrl);
-    // Add connection logic here
+  const handleConnect = async () => {
+    try {
+      setIsLoading(true);
+      console.log("Connecting to:", serverUrl);
+      
+      // Check if using http:// (insecure)
+      const { url: normalizedUrl, isInsecure } = AuthService.normalizeServerUrl(serverUrl);
+      
+      // If using http://, show confirmation
+      if (isInsecure) {
+        // We need to create a promise for the alert
+        const continueWithInsecure = await new Promise<boolean>((resolve) => {
+          Alert.alert(
+            'Warning: Insecure Connection!',
+            'Using HTTP instead of HTTPS is insecure. Your data could be intercepted. Are you sure you want to continue with an insecure connection?',
+            [
+              {
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => resolve(false)
+              },
+              {
+                text: 'Continue Anyway',
+                style: 'destructive',
+                onPress: () => resolve(true)
+              }
+            ],
+            { cancelable: false }
+          );
+        });
+        
+        // If user canceled, stop the connection process
+        if (!continueWithInsecure) {
+          setIsLoading(false);
+          return;
+        }
+      }
+      
+      // Initialize authentication service
+      const { success } = await AuthService.initialize(normalizedUrl);
+      
+      if (success) {
+        // Get authorization URL
+        const authUrl = AuthService.getAuthorizationUrl();
+        
+        if (authUrl) {
+          // Open browser for auth
+          await WebBrowser.openAuthSessionAsync(authUrl, 'opencloudmobile://auth/callback');
+        } else {
+          Alert.alert('Error', 'Failed to generate authorization URL');
+        }
+      } else {
+        Alert.alert('Error', 'Failed to discover OpenID Connect configuration');
+      }
+    } catch (error) {
+      console.error('Connection error:', error);
+      Alert.alert('Connection Error', error.message || 'Failed to connect to server');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -30,14 +90,21 @@ export default function Index() {
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="url"
+            editable={!isLoading}
           />
           
           <TouchableOpacity 
-            style={[styles.button, !serverUrl ? styles.buttonDisabled : null]} 
+            style={[
+              styles.button, 
+              !serverUrl ? styles.buttonDisabled : null,
+              isLoading ? styles.buttonLoading : null
+            ]} 
             onPress={handleConnect}
-            disabled={!serverUrl}
+            disabled={!serverUrl || isLoading}
           >
-            <Text style={styles.buttonText}>Connect</Text>
+            <Text style={styles.buttonText}>
+              {isLoading ? 'Connecting...' : 'Connect'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -86,6 +153,9 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: "#cccccc",
+  },
+  buttonLoading: {
+    backgroundColor: "#4aa3ff",
   },
   buttonText: {
     color: "white",

@@ -25,6 +25,16 @@ In the output, you'll find options to open the app in a:
 
 This project uses [file-based routing](https://docs.expo.dev/router/introduction) with Expo Router.
 
+## Documentation
+
+Comprehensive documentation is available at [https://michaelstingl.github.io/opencloud-mobile/](https://michaelstingl.github.io/opencloud-mobile/)
+
+The documentation covers:
+- Getting started guides
+- Authentication and OpenID Connect implementation
+- Configuration and customization
+- Architecture overview
+
 ## Development
 
 The app is built with:
