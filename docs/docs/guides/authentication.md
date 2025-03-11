@@ -118,6 +118,8 @@ To customize the authentication flow:
 
 ## Testing Authentication
 
+### Manual Testing
+
 To test authentication during development:
 
 1. Use a real OpenCloud server with OIDC support
@@ -125,4 +127,53 @@ To test authentication during development:
 3. Complete the authentication flow
 4. Check the logs for token information
 
-For automated testing, you can mock the authentication services.
+### Automated Testing
+
+The project includes comprehensive unit tests for all authentication services with 100% code coverage:
+
+1. **WebFingerService Tests**:
+   - Testing WebFinger discovery
+   - Testing link retrieval
+   - Testing OIDC issuer discovery
+   - Testing error handling
+
+2. **OidcService Tests**:
+   - Testing configuration fetching
+   - Testing OIDC discovery
+   - Testing authorization URL generation
+   - Testing various parameter combinations
+
+3. **AuthService Tests**:
+   - Testing URL normalization
+   - Testing service initialization
+   - Testing token exchange
+   - Testing secure and insecure connections
+
+To run the authentication tests:
+
+```bash
+npx jest "services/__tests__"
+```
+
+To run tests with coverage report:
+
+```bash
+npx jest "services/__tests__" --coverage
+```
+
+To run specific service tests:
+
+```bash
+npx jest "services/__tests__/WebFingerService-test.ts"
+npx jest "services/__tests__/OidcService-test.ts"
+npx jest "services/__tests__/AuthService-test.ts"
+```
+
+When writing your own components that use these services, you can mock them in your tests:
+
+```typescript
+// Example: Mocking AuthService in a component test
+jest.mock('../services/AuthService');
+// Then in your test
+(AuthService.initialize as jest.Mock).mockResolvedValue({ success: true });
+```

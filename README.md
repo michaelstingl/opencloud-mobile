@@ -44,6 +44,39 @@ The app is built with:
 - Expo Router for navigation
 - Modern React patterns (hooks, functional components)
 
+### Testing
+
+Run the test suite:
+
+```bash
+npm test
+```
+
+Run tests with continuous monitoring:
+
+```bash
+npm test -- --watchAll
+```
+
+Run tests with coverage report:
+
+```bash
+npm test -- --coverage
+```
+
+Run specific tests:
+
+```bash
+npm test -- -t "WebFingerService"
+```
+
+We use Jest for testing with a focus on:
+- Unit tests for services and utilities (100% coverage for auth services)
+- Component tests for UI elements
+- Integration tests for complex flows
+
+Test files are located next to the code they test in `__tests__` directories.
+
 ## Build for production
 
 To create a production build:
