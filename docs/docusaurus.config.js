@@ -59,7 +59,6 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
             position: 'left',
             label: 'API Reference',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
           {
             href: 'https://github.com/michaelstingl/opencloud-mobile',
             label: 'GitHub',
@@ -71,33 +70,28 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: 'Documentation',
             items: [
               {
-                label: 'Tutorial',
+                label: 'Getting Started',
                 to: '/docs/intro',
+              },
+              {
+                label: 'API Reference',
+                to: '/docs/api/overview',
+              },
+              {
+                label: 'Architecture',
+                to: '/docs/architecture/overview',
               },
             ],
           },
           {
-            title: 'Community',
+            title: 'Development',
             items: [
-              {
-                label: 'GitHub Discussions',
-                href: 'https://github.com/michaelstingl/opencloud-mobile/discussions',
-              },
               {
                 label: 'GitHub Issues',
                 href: 'https://github.com/michaelstingl/opencloud-mobile/issues',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Blog',
-                to: '/blog',
               },
               {
                 label: 'GitHub',
