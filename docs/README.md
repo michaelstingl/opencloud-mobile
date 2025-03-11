@@ -1,6 +1,6 @@
 # OpenCloud Mobile Documentation
 
-This documentation website for the OpenCloud Mobile project is built using [Docusaurus 2](https://docusaurus.io/), a modern static website generator.
+This documentation website for the OpenCloud Mobile project is built using [Docusaurus 3](https://docusaurus.io/), a modern static website generator.
 
 ## Development
 
