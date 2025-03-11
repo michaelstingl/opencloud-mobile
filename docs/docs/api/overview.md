@@ -6,6 +6,12 @@ sidebar_position: 1
 
 The OpenCloud Mobile app provides several key APIs and components that you can use in your development. This section provides an overview of the available APIs.
 
+## Backend API
+
+The application communicates with the OpenCloud backend using the LibreGraph API:
+
+- [OpenAPI Specification](openapi-spec.md) - Documentation of the LibreGraph API
+
 ## Components
 
 The app includes reusable React components that follow consistent design patterns:
