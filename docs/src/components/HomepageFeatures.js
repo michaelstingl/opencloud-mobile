@@ -4,32 +4,32 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
+    title: 'Cross-Platform',
     Svg: require('../../static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        OpenCloud Mobile works seamlessly on iOS and Android, with a shared codebase 
+        built on React Native and Expo for consistent user experience.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Modern Authentication',
     Svg: require('../../static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Secure your data with modern OpenID Connect authentication. WebFinger discovery
+        makes server connections simple and straightforward.
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: 'File Access & Sync',
     Svg: require('../../static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Access your cloud files on the go. View, share and sync your content 
+        between your mobile device and your OpenCloud server.
       </>
     ),
   },
