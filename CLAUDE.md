@@ -16,6 +16,7 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Format code: `prettier --write "**/*.{ts,tsx}"`
 - Check for security vulnerabilities: `npm audit`
 - Fix automatic security issues: `npm audit fix`
+- Update OpenAPI specification: `./scripts/update-openapi.sh`
 
 ## Documentation
 - Documentation is available at: https://michaelstingl.github.io/opencloud-mobile/
