@@ -225,7 +225,7 @@ PODS:
     - ExpoModulesCore
   - ExpoHaptics (14.0.1):
     - ExpoModulesCore
-  - ExpoHead (4.0.17):
+  - ExpoHead (3.5.24):
     - ExpoModulesCore
   - ExpoKeepAwake (14.0.3):
     - ExpoModulesCore
@@ -2312,7 +2312,7 @@ SPEC CHECKSUMS:
   ExpoFileSystem: 2d804c73034c0d65eb2a640e0a77627033b69edc
   ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
   ExpoHaptics: 8d199b2f33245ea85289ff6c954c7ee7c00a5b5d
-  ExpoHead: 5d1c5c20e3933db5d9ca349424cb3b9a4a84b706
+  ExpoHead: 1a1b30c6c1d125e9b8a199ca305c16a1dc041624
   ExpoKeepAwake: b0171a73665bfcefcfcc311742a72a956e6aa680
   ExpoLinking: 8d12bee174ba0cdf31239706578e29e74a417402
   ExpoModulesCore: 7f5e59799b89e5fad1d7cc6070744c1003ca320f
@@ -2389,6 +2389,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 90d80701b27946c4b23461c00a7207f300a6ff71
 
-PODFILE CHECKSUM: 92c910223876b19c576db1e5267637cc35a2da43
+PODFILE CHECKSUM: 89592f9133674e515585198a9a02d87b22ae7c3a
 
 COCOAPODS: 1.16.2
