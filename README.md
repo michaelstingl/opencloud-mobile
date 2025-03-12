@@ -1,5 +1,8 @@
 # OpenCloud Mobile
 
+[![Tests and Coverage](https://github.com/michaelstingl/opencloud-mobile/actions/workflows/tests.yml/badge.svg)](https://github.com/michaelstingl/opencloud-mobile/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/michaelstingl/opencloud-mobile/branch/main/graph/badge.svg)](https://codecov.io/gh/michaelstingl/opencloud-mobile)
+
 A mobile client for iOS and Android for connecting to OpenCloud servers.
 
 ## Get started
