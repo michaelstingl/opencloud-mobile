@@ -9,9 +9,11 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Run on iOS (release): `npx expo run:ios --configuration Release`
 - Run on Android emulator: `npx expo run:android`
 - Run in web browser: `npx expo start --web`
-- Run tests: `jest --watchAll`
-- Run single test: `jest -t "test name"`
-- Run tests with coverage: `jest --coverage`
+- Run tests: `npm test` or `npm run test`
+- Run tests in fast mode: `npm run test:fast -- <file-pattern>`
+- Run tests with coverage: `npm run test:coverage`
+- Run HttpUtil tests: `npm run test:http`
+- Run tests in CI mode: `npm run test:ci`
 - Lint code: `npx expo lint`
 - Format code: `prettier --write "**/*.{ts,tsx}"`
 - Check for security vulnerabilities: `npm audit`
@@ -38,6 +40,21 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
   - `/types/webfinger.ts` - WebFinger response types
   - `/types/oidc.ts` - OpenID Connect configuration types
 - `/assets` - Images, fonts, and other static resources
+
+## Testing Guidelines
+
+- All new features and bug fixes should include tests
+- Follow test-driven development (TDD) when appropriate
+- Test files should be placed in `__tests__` directories
+- Test files should be named `ComponentName-test.tsx` or `ServiceName-test.ts`
+- Use Jest as the testing framework
+- Mock external dependencies and API calls
+- Create helper functions for commonly reused test code
+- Apply DRY principles to test code
+- Focus coverage on core business logic and critical paths
+- Run `npm run test:coverage` to check test coverage
+- Aim for at least 80% coverage for critical service code
+- Use descriptive test names that explain what is being tested
 
 ## Code Style Guidelines
 - Use TypeScript with strict type checking

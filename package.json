@@ -9,10 +9,11 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
+    "test:ci": "jest --ci --config jest.config.js",
+    "test:fast": "jest --no-watchman --maxWorkers=4 --config jest.config.js",
+    "test:coverage": "jest --coverage --config jest.config.js",
+    "test:http": "jest services/api/__tests__/HttpUtil-test.ts --config jest.config.js",
     "lint": "expo lint"
-  },
-  "jest": {
-    "preset": "jest-expo"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.10",
