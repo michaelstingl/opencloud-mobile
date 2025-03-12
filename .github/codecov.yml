@@ -1,0 +1,16 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%  # Target for overall coverage
+        threshold: 2%  # Allowed drop
+    patch:
+      default:
+        target: 80%  # Target for new/changed files
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false  # Comment even if coverage doesn't change
+  require_base: false
+  require_head: true
