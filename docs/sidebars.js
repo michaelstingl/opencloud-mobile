@@ -20,6 +20,9 @@ module.exports = {
         'guides/getting-started',
         'guides/configuration',
         'guides/authentication',
+        'guides/http-standards',
+        'guides/openapi-management',
+        'guides/api-request-flow',
       ],
     },
     {
@@ -34,6 +37,7 @@ module.exports = {
       label: 'Contributing',
       items: [
         'contributing/how-to-contribute',
+        'contributing/testing',
       ],
     },
     {
