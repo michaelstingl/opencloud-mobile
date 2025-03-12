@@ -40,6 +40,18 @@ Service modules handle external communication and data processing:
 - **Storage Service** - Handles local storage and caching
 - **File Service** - Manages file operations
 
+## HTTP Utilities
+
+The shared HTTP utilities provide standardized networking capabilities:
+
+- **HttpUtil** - Centralized HTTP utility functions for all services:
+  - **generateUuid()** - Generates RFC-compliant UUID v4 for request correlation
+  - **createStandardHeaders()** - Creates consistent headers for all requests
+  - **createRequestOptions()** - Creates fetch options with standardized settings
+  - **generateCurlCommand()** - Generates equivalent curl commands for debugging
+  - **logRequest()** - Standardized request logging with redaction of sensitive data
+  - **logResponse()** - Standardized response logging with performance metrics
+
 ## Utilities
 
 Helper functions and utilities for common tasks:

@@ -59,12 +59,36 @@ Data flows through the application in the following way:
 
 ### Server Communication
 
-Communication with the OpenCloud server is handled by a dedicated API service that:
+Communication with the OpenCloud server is handled by a dedicated API service architecture:
 
-- Makes HTTP requests to the server
-- Handles authentication
-- Processes responses
-- Manages error handling
+#### HTTP Utilities and Standards
+
+The app follows strict HTTP communication standards through a shared `HttpUtil` class:
+
+- Standardized headers across all requests:
+  - User-Agent: Platform and version-specific (e.g., `OpenCloudMobile/1.0.0 (ios)`)
+  - X-Request-ID: UUID v4 for request correlation and tracing
+  - Content-Type and Accept headers based on request type
+
+- Secure redirect handling:
+  - Manual redirect handling (`redirect: 'manual'`) for all requests
+  - No automatic redirect following for security and user control
+  - Explicit evaluation of redirect responses based on status codes
+
+- Comprehensive logging:
+  - Request/response logging with configurable verbosity
+  - Request timing measurements
+  - Redacted sensitive information (tokens) in logs
+  - Debug curl command generation for troubleshooting
+
+#### Service Structure
+
+The API layer is organized into specialized services:
+
+- `ApiService`: Core API communication with authorization
+- `WebFingerService`: WebFinger discovery
+- `OidcService`: OpenID Connect operations
+- `AuthService`: Authentication coordination
 
 ### Authentication Flow
 

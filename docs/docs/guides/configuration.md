@@ -22,15 +22,43 @@ The main configuration file is located at `/config/app.config.ts`. This file exp
 
 ```typescript
 // Example from app.config.ts
-export const appConfig: AppConfig = {
+// Default configuration values
+const defaultConfig: AppConfig = {
   auth: {
     clientId: Platform.OS === 'ios' ? 'OpenCloudIOS' : 'OpenCloudAndroid',
     redirectUri: Platform.OS === 'ios' ? 'oc://ios.opencloud.eu' : 'oc://android.opencloud.eu',
+    postLogoutRedirectUri: Platform.OS === 'ios' ? 'oc://ios.opencloud.eu' : 'oc://android.opencloud.eu',
     defaultScopes: 'openid profile email',
   },
   api: {
     timeout: 30000, // 30 seconds
+    headers: {
+      // userAgent is dynamically set from package.json name and version
+      // Example: "OpencloudMobile/1.0.0 (ios)" or "OpencloudMobile/1.0.0 (android)"
+      useRequestId: true
+    },
+    logging: {
+      maxBodyLogLength: 1000,
+      generateCurlCommands: true,
+      enableDebugLogging: false
+    }
   },
+};
+
+// Determine if we're in development mode
+const isDevelopmentMode = typeof __DEV__ !== 'undefined' && __DEV__;
+
+// Final configuration with development mode overrides
+export const appConfig: AppConfig = {
+  ...defaultConfig,
+  api: {
+    ...defaultConfig.api,
+    logging: {
+      ...defaultConfig.api.logging,
+      // Enable debug logging automatically in development mode
+      enableDebugLogging: isDevelopmentMode || defaultConfig.api.logging?.enableDebugLogging || false,
+    }
+  }
 };
 ```
 
@@ -44,6 +72,7 @@ Authentication settings control how the app interacts with OpenID Connect provid
 |--------|-------------|---------------|
 | `clientId` | OAuth client ID | iOS: `OpenCloudIOS`<br/>Android: `OpenCloudAndroid` |
 | `redirectUri` | OAuth redirect URI | iOS: `oc://ios.opencloud.eu`<br/>Android: `oc://android.opencloud.eu` |
+| `postLogoutRedirectUri` | URI to redirect to after logout | iOS: `oc://ios.opencloud.eu`<br/>Android: `oc://android.opencloud.eu` |
 | `defaultScopes` | Default OAuth scopes to request | `openid profile email` |
 
 ### API Configuration
@@ -53,16 +82,34 @@ Settings for API communication:
 | Option | Description | Default Value |
 |--------|-------------|---------------|
 | `timeout` | Default API request timeout in milliseconds | `30000` (30 seconds) |
+| `headers.userAgent` | User-Agent string for all API requests | Dynamically constructed as `${APP_NAME}/${APP_VERSION} (${PLATFORM})` where APP_NAME and APP_VERSION come from package.json |
+| `headers.useRequestId` | Whether to use X-Request-ID in all requests | `true` |
+
+### Logging Configuration
+
+Settings for application logging:
+
+| Option | Description | Default Value |
+|--------|-------------|---------------|
+| `logging.maxBodyLogLength` | Maximum number of characters to log for request/response bodies | `1000` |
+| `logging.generateCurlCommands` | Whether to generate curl commands in logs for debugging | `true` |
+| `logging.enableDebugLogging` | Enable detailed debug logging, including response headers | `true` in development, `false` in production |
 
 ## How to Use Configuration
 
 To use the configuration in your code:
 
 ```typescript
-import { authConfig } from '../config/app.config';
+import { authConfig, apiConfig } from '../config/app.config';
 
-// Use the configuration values
+// Use the authentication configuration
 console.log('Client ID:', authConfig.clientId);
+
+// Use the API configuration
+console.log('Debug logging enabled:', apiConfig.logging?.enableDebugLogging);
+
+// Debug logging is automatically enabled in development mode (__DEV__ === true)
+// but can still be controlled manually in production
 ```
 
 ## White-Labeling
