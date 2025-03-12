@@ -34,4 +34,5 @@ export interface OpenIDConfiguration {
   require_request_uri_registration?: boolean;
   op_policy_uri?: string;
   op_tos_uri?: string;
+  end_session_endpoint?: string; // OpenID Connect RP-Initiated Logout endpoint
 }
