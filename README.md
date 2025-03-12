@@ -46,6 +46,8 @@ The app is built with:
 - TypeScript
 - Expo Router for navigation
 - Modern React patterns (hooks, functional components)
+- Standardized HTTP communication with request tracing
+- OpenID Connect (OIDC) authentication with WebFinger discovery
 
 ### Testing
 
@@ -53,6 +55,12 @@ Run the test suite:
 
 ```bash
 npm test
+```
+
+For faster test execution during development:
+
+```bash
+npm run test:fast -- <file-pattern>
 ```
 
 Run tests with continuous monitoring:
@@ -64,7 +72,19 @@ npm test -- --watchAll
 Run tests with coverage report:
 
 ```bash
-npm test -- --coverage
+npm run test:coverage
+```
+
+Run HTTP utility tests specifically:
+
+```bash
+npm run test:http
+```
+
+Run tests in CI mode (used by GitHub Actions):
+
+```bash
+npm run test:ci
 ```
 
 Run specific tests:
@@ -74,11 +94,32 @@ npm test -- -t "WebFingerService"
 ```
 
 We use Jest for testing with a focus on:
-- Unit tests for services and utilities (100% coverage for auth services)
+- Unit tests for services and utilities (>90% coverage for core services)
 - Component tests for UI elements
 - Integration tests for complex flows
+- Standardized test helpers for consistent patterns
 
 Test files are located next to the code they test in `__tests__` directories.
+
+### Continuous Integration
+
+We use GitHub Actions for continuous integration:
+- Automated test runs on pushes to main and PRs
+- Code coverage reports via Codecov
+- Detailed coverage feedback on pull requests
+
+View the latest [test results](https://github.com/michaelstingl/opencloud-mobile/actions/workflows/tests.yml) or [coverage report](https://codecov.io/gh/michaelstingl/opencloud-mobile).
+
+## HTTP Communication
+
+The app uses a standardized HTTP communication layer:
+
+- Centralized `HttpUtil` for all API requests
+- Request tracing with UUID v4 correlation IDs
+- Standardized headers and request handling
+- Configurable logging for debugging
+- Manual redirect handling for security
+- Development tools like curl command generation
 
 ## Build for production
 
@@ -91,3 +132,17 @@ npx expo run:ios --configuration Release
 # For Android
 npx expo run:android --variant release
 ```
+
+## Project Structure
+
+- `/app` - Main application screens and navigation (using expo-router)
+- `/components` - Reusable UI components
+- `/config` - Application configuration including platform-specific settings
+- `/hooks` - Custom React hooks
+- `/services` - API services and data handling
+  - `/services/api` - HTTP communication utilities
+  - `/services/WebFingerService.ts` - WebFinger discovery for OpenID Connect
+  - `/services/OidcService.ts` - OpenID Connect operations
+  - `/services/AuthService.ts` - Authentication coordination
+- `/types` - TypeScript type definitions
+- `/assets` - Images, fonts, and other static resources
