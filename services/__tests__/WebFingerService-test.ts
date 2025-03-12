@@ -5,6 +5,41 @@ import { WebFingerResponse } from "../../types/webfinger";
 global.fetch = jest.fn();
 console.error = jest.fn();
 
+// Helper functions for creating mock responses
+function createMockHeaders(requestId = "test-request-id") {
+  return {
+    get: (name: string) => {
+      if (name.toLowerCase() === 'x-request-id') {
+        return requestId;
+      }
+      return null;
+    },
+    entries: () => {
+      return [['content-type', 'application/json'], ['x-request-id', requestId]];
+    }
+  };
+}
+
+function createSuccessResponse(data: any, status = 200, statusText = "OK") {
+  return {
+    ok: true,
+    status,
+    statusText,
+    json: async () => data,
+    headers: createMockHeaders(),
+  };
+}
+
+function createErrorResponse(status = 404, statusText = "Not Found") {
+  return {
+    ok: false,
+    status,
+    statusText,
+    text: async () => statusText,
+    headers: createMockHeaders(),
+  };
+}
+
 describe("WebFingerService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,10 +58,9 @@ describe("WebFingerService", () => {
         ],
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce(
+        createSuccessResponse(mockResponse)
+      );
 
       const serverUrl = "https://example.com";
       const resource = "acct:user@example.com";
@@ -40,7 +74,9 @@ describe("WebFingerService", () => {
         expect.objectContaining({
           method: "GET",
           headers: expect.objectContaining({
-            Accept: "application/json",
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json",
+            "X-Request-ID": expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/),
           }),
         }),
       );
@@ -49,10 +85,9 @@ describe("WebFingerService", () => {
 
     it("should handle trailing slash in server URL", async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({}),
-      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce(
+        createSuccessResponse({})
+      );
 
       // Act
       await WebFingerService.discover(
@@ -69,10 +104,9 @@ describe("WebFingerService", () => {
 
     it("should throw an error when response is not OK", async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: false,
-        statusText: "Not Found",
-      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce(
+        createErrorResponse(404, "Not Found")
+      );
 
       // Act & Assert
       await expect(
@@ -166,10 +200,9 @@ describe("WebFingerService", () => {
         ],
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce(
+        createSuccessResponse(mockResponse)
+      );
 
       // Act
       const issuer = await WebFingerService.discoverOidcIssuer(
@@ -193,10 +226,9 @@ describe("WebFingerService", () => {
         ],
       };
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockResponse,
-      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce(
+        createSuccessResponse(mockResponse)
+      );
 
       // Act
       const issuer = await WebFingerService.discoverOidcIssuer(
@@ -210,8 +242,8 @@ describe("WebFingerService", () => {
 
     it("should handle errors during OIDC issuer discovery", async () => {
       // Arrange
-      (global.fetch as jest.Mock).mockRejectedValueOnce(
-        new Error("Network error"),
+      jest.spyOn(WebFingerService, 'discover').mockRejectedValueOnce(
+        new Error("Network error")
       );
 
       // Act & Assert
@@ -224,7 +256,7 @@ describe("WebFingerService", () => {
 
       // Verify the error was logged
       expect(console.error).toHaveBeenCalledWith(
-        "OIDC issuer discovery error:",
+        expect.stringContaining("OIDC issuer discovery error:"),
         expect.any(Error),
       );
     });
