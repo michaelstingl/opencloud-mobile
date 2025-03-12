@@ -40,6 +40,12 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>opencloudmobile</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
           <string>oc</string>
         </array>
       </dict>
