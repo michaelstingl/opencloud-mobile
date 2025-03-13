@@ -1,5 +1,7 @@
 import { Stack } from "expo-router";
 import { useEffect } from "react";
+// Platform is needed for platform-specific redirect URIs and User-Agent in the app configuration
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Linking, Alert, Platform } from "react-native";
 import { router } from "expo-router";
 import { AuthService } from "../services/AuthService";

@@ -1,4 +1,5 @@
 import { Platform } from 'react-native';
+import packageJson from '../package.json';
 
 /**
  * Application configuration
@@ -79,8 +80,6 @@ interface AppConfig {
 /**
  * Default configuration values
  */
-// Import package.json for version information
-import packageJson from '../package.json';
 
 // App information for User-Agent
 const APP_NAME = packageJson.name || 'opencloud-mobile';

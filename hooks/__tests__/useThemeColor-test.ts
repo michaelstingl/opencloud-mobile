@@ -1,11 +1,10 @@
 import { useThemeColor } from '../useThemeColor';
+import { useColorScheme } from 'react-native';
 
 // Mock React Native's useColorScheme
 jest.mock('react-native', () => ({
   useColorScheme: jest.fn()
 }));
-
-import { useColorScheme } from 'react-native';
 
 describe('useThemeColor', () => {
   it('should return the light color when theme is light', () => {

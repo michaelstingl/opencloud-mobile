@@ -1,3 +1,5 @@
+// WebFingerService is used for discovery through OidcService's discoverConfiguration function
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { WebFingerService } from './WebFingerService';
 import { OidcService } from './OidcService';
 import { OpenIDConfiguration } from '../types/oidc';
@@ -259,8 +261,12 @@ export class AuthService {
     try {
       // ====== Now using real implementation instead of test mode ======
       
-      // Create and log a curl command for testing
+      // Create and log a curl command for testing (used in debug logging mode)
+      // Used in development for logging
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let curlHeaders = '';
+      // Used in development for creating curl commands
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       let curlCommand = '';
       
       // Generate a request ID for this request

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, ActivityIndicator, RefreshControl, Image, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { ApiService, User, Drive } from '../services/api/ApiService';
 import { AuthService } from '../services/AuthService';
+// Kept for future authentication enhancements (token renewal, advanced logout, auth info display)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { authConfig } from '../config/app.config';
 import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
@@ -111,6 +113,9 @@ export default function AccountScreen() {
     return () => {
       console.log("Account screen unmounting");
     };
+    // loadData is intentionally excluded from deps to only load data on mount
+    // and prevent unnecessary API requests. Manual refresh is available via pull-to-refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {
