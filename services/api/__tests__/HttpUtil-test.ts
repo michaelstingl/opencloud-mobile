@@ -246,7 +246,7 @@ describe("HttpUtil", () => {
       // Assert - check that one of the calls has the redacted token
       expect(console.log).toHaveBeenCalledWith(
         expect.any(String),
-        expect.stringContaining("Bearer [REDACTED]")
+        expect.stringContaining("Bearer [REDACTED_FOR_SECURITY]")
       );
     });
   });
