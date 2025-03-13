@@ -8,6 +8,7 @@ import { ApiService } from "../services/api/ApiService";
 export default function RootLayout() {
   useEffect(() => {
     console.log("========== ROOT LAYOUT MOUNT ==========");
+    console.log(`App running in ${__DEV__ ? 'DEVELOPMENT' : 'PRODUCTION'} mode`);
     console.log("Setting up URL handling for auth callbacks");
     
     // Handle deep linking for auth callback

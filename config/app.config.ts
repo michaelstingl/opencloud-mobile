@@ -106,8 +106,8 @@ const defaultConfig: AppConfig = {
     timeout: 30000, // 30 seconds
     logging: {
       maxBodyLogLength: 1000, // Maximum number of characters to log for request/response bodies
-      generateCurlCommands: true, // Whether to generate curl commands in logs for debugging
-      enableDebugLogging: false, // Set to true to enable detailed debug logs
+      generateCurlCommands: false, // Default: No curl commands in production, will be enabled in dev mode
+      enableDebugLogging: false, // Default: No detailed debug logs in production, will be enabled in dev mode
     },
     headers: {
       userAgent: USER_AGENT, // Default User-Agent for all API requests with version and platform
@@ -130,8 +130,9 @@ export const appConfig: AppConfig = {
     ...defaultConfig.api,
     logging: {
       ...defaultConfig.api.logging,
-      // Enable debug logging automatically in development mode
+      // Enable debug logging and curl commands automatically in development mode only
       enableDebugLogging: isDevelopmentMode || defaultConfig.api.logging?.enableDebugLogging || false,
+      generateCurlCommands: isDevelopmentMode || defaultConfig.api.logging?.generateCurlCommands || false
     }
   }
 };
