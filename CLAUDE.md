@@ -35,6 +35,8 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
   - `/services/WebFingerService.ts` - WebFinger discovery for OpenID Connect
   - `/services/OidcService.ts` - OpenID Connect operations
   - `/services/AuthService.ts` - Authentication coordination
+  - `/services/api/ApiService.ts` - API client for server communication
+  - `/services/api/HttpUtil.ts` - HTTP utilities for requests, logging, and debugging
 - `/utils` - Helper functions and utilities
 - `/types` - TypeScript type definitions
   - `/types/webfinger.ts` - WebFinger response types
@@ -55,6 +57,19 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Run `npm run test:coverage` to check test coverage
 - Aim for at least 80% coverage for critical service code
 - Use descriptive test names that explain what is being tested
+
+## API Communication
+- All HTTP requests use the unified `HttpUtil.performRequest()` method
+- Standard logging for all requests including:
+  - Request URL, method, headers, and body
+  - Response status, headers, and body
+  - Request/response timing
+  - Curl command generation for debugging
+- Secure handling of sensitive information (tokens are automatically redacted)
+- Request IDs are used for request tracking and correlation
+- Graph API endpoints follow Microsoft Graph API structure
+  - User information: `/graph/v1.0/me?$expand=memberOf`
+  - Drives/spaces: `/graph/v1.0/drives`
 
 ## Code Style Guidelines
 - Use TypeScript with strict type checking
@@ -95,10 +110,14 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Platform-specific settings using React Native's `Platform.OS`
 - Configuration categories:
   - `auth`: Authentication settings (client IDs, redirect URIs, scopes)
-  - `api`: API communication settings (timeouts, etc.)
+  - `api`: API communication settings (timeouts, logging, headers)
+- Logging configuration:
+  - `maxBodyLogLength`: Maximum number of characters to log for request/response bodies
+  - `generateCurlCommands`: Automatically enabled in development mode, generates curl commands for API requests
+  - `enableDebugLogging`: Automatically enabled in development mode, provides detailed logs
 - Import configuration in components:
   ```typescript
-  import { authConfig } from '../config/app.config';
+  import { authConfig, apiConfig } from '../config/app.config';
   ```
 
 ## Git Workflow

@@ -4,133 +4,133 @@ sidebar_position: 6
 
 # API Request Flow
 
-Diese Dokumentation erklärt den vollständigen Ablauf eines API-Requests in der OpenCloud Mobile App, von der Initiierung bis zur Verarbeitung der Antwort.
+This documentation explains the complete flow of an API request in the OpenCloud Mobile app, from initiation to response processing.
 
-## Übersicht des Request-Flows
+## Request Flow Overview
 
-Ein typischer API-Request in der OpenCloud Mobile App durchläuft folgende Phasen:
+A typical API request in the OpenCloud Mobile app goes through the following phases:
 
-1. **Request-Initiierung**: Ein Komponent oder Hook fordert Daten an
-2. **Header-Erstellung**: Standardisierte Header werden erstellt
-3. **Request-Vorbereitung**: Die Anfrage wird konfiguriert
-4. **Logging (Pre-Request)**: Die Anfrage wird protokolliert
-5. **Netzwerkanfrage**: Die eigentliche HTTP-Anfrage wird gesendet
-6. **Antwortverarbeitung**: Die Serverantwort wird verarbeitet
-7. **Logging (Post-Request)**: Die Antwort wird protokolliert
-8. **Fehlerbehandlung**: Eventuelle Fehler werden behandelt
-9. **Datenrückgabe**: Die verarbeiteten Daten werden zurückgegeben
+1. **Request Initiation**: A component or hook requests data
+2. **Header Creation**: Standardized headers are created
+3. **Request Preparation**: The request is configured
+4. **Logging (Pre-Request)**: The request is logged
+5. **Network Request**: The actual HTTP request is sent
+6. **Response Processing**: The server response is processed
+7. **Logging (Post-Request)**: The response is logged
+8. **Error Handling**: Any errors are handled
+9. **Data Return**: The processed data is returned
 
-## Detaillierte Phasen
+## Detailed Phases
 
-### 1. Request-Initiierung
+### 1. Request Initiation
 
-API-Requests werden typischerweise von React-Komponenten über einen Hook oder direkt über einen Service initiiert:
+API requests are typically initiated from React components via a hook or directly through a service:
 
 ```typescript
-// Beispiel: Initiierung über einen Hook
+// Example: Initiation via a hook
 function UserProfileScreen() {
   const { userData, loading, error } = useUserData();
   // ...
 }
 
-// Beispiel: Direkte Nutzung des API-Services
+// Example: Direct use of the API service
 async function fetchUserData() {
   const userData = await ApiService.getCurrentUser();
   // ...
 }
 ```
 
-### 2. Header-Erstellung
+### 2. Header Creation
 
-Alle Requests verwenden standardisierte Header, die über die `HttpUtil.createStandardHeaders()` Methode erzeugt werden:
+All requests use standardized headers generated via the `HttpUtil.createStandardHeaders()` method:
 
 ```typescript
-// Erstellen der Standard-Header
+// Create standard headers
 const headers = HttpUtil.createStandardHeaders(
-  true,               // includeAuth: Authentifizierungs-Header einfügen?
-  this.accessToken,   // token: Das Auth-Token, falls inkludiert
-  'application/json'  // contentType: Format des Request-Body
+  true,               // includeAuth: Include authentication header?
+  this.accessToken,   // token: The auth token, if included
+  'application/json'  // contentType: Format of the request body
 );
 ```
 
-Die Header enthalten:
-- `Content-Type`: Definiert das Format des Request-Body (Standard: 'application/json')
-- `Accept`: Definiert akzeptierte Antwortformate
-- `User-Agent`: Identifiziert die App-Version und Plattform
-- `X-Request-ID`: Eindeutige UUID für Request-Korrelation
-- `Authorization`: Auth-Token, falls Authentifizierung erforderlich ist
+Headers include:
+- `Content-Type`: Defines the request body format (default: 'application/json')
+- `Accept`: Defines accepted response formats
+- `User-Agent`: Identifies the app version and platform
+- `X-Request-ID`: Unique UUID for request correlation
+- `Authorization`: Auth token, if authentication is required
 
-### 3. Request-Vorbereitung
+### 3. Request Preparation
 
-Die Request-Optionen werden mit `HttpUtil.createRequestOptions()` erstellt:
+Request options are created with `HttpUtil.createRequestOptions()`:
 
 ```typescript
-// Erstellen der Request-Optionen
+// Create request options
 const options = HttpUtil.createRequestOptions(
-  'GET',       // HTTP-Methode
-  headers,     // Vorbereitete Header
-  requestBody  // Optional: Request-Body als String
+  'GET',       // HTTP method
+  headers,     // Prepared headers
+  requestBody  // Optional: Request body as string
 );
 ```
 
-Wichtige Optionen:
-- `method`: HTTP-Methode (GET, POST, PUT, DELETE, etc.)
-- `redirect: 'manual'`: Verhindert automatisches Folgen von Weiterleitungen
-- `headers`: Die standardisierten Header
-- `body`: Request-Body (falls vorhanden)
+Important options:
+- `method`: HTTP method (GET, POST, PUT, DELETE, etc.)
+- `redirect: 'manual'`: Prevents automatic following of redirects
+- `headers`: The standardized headers
+- `body`: Request body (if present)
 
 ### 4. Logging (Pre-Request)
 
-Vor dem Senden wird der Request protokolliert:
+Before sending, the request is logged:
 
 ```typescript
-// Request protokollieren
+// Log request
 HttpUtil.logRequest(
-  requestId,    // UUID zur Nachverfolgung
-  'API',        // Service-Präfix für Logs
-  url,          // Ziel-URL
-  method,       // HTTP-Methode
-  headers,      // Header (sensible Daten werden redigiert)
-  body          // Request-Body (falls vorhanden)
+  requestId,    // UUID for tracking
+  'API',        // Service prefix for logs
+  url,          // Target URL
+  method,       // HTTP method
+  headers,      // Headers (sensitive data is redacted)
+  body          // Request body (if present)
 );
 
-// Optional: cURL-Befehl für Debugging generieren
+// Optional: Generate cURL command for debugging
 if (apiConfig.logging?.generateCurlCommands) {
   const curlCommand = HttpUtil.generateCurlCommand(url, options);
-  console.log(`[API:${requestId}] Äquivalenter curl-Befehl:\n${curlCommand}`);
+  console.log(`[API:${requestId}] Equivalent curl command:\n${curlCommand}`);
 }
 ```
 
-### 5. Netzwerkanfrage
+### 5. Network Request
 
-Der eigentliche HTTP-Request wird mit der Fetch-API gesendet:
+The actual HTTP request is sent using the Fetch API:
 
 ```typescript
-// Timing starten
+// Start timing
 const requestStartTime = Date.now();
 
-// Request ausführen
+// Execute request
 const response = await fetch(url, options);
 
-// Timing beenden
+// End timing
 const requestDuration = Date.now() - requestStartTime;
 ```
 
-### 6. Antwortverarbeitung
+### 6. Response Processing
 
-Die Antwort wird basierend auf Status-Code und Content-Type verarbeitet:
+The response is processed based on status code and content type:
 
 ```typescript
-// Antwort protokollieren
+// Log response
 await HttpUtil.logResponse(requestId, 'API', response, requestDuration);
 
-// Status-Code prüfen
+// Check status code
 if (!response.ok) {
-  // Fehlerbehandlung (siehe Punkt 8)
-  throw new Error(`API-Anfrage fehlgeschlagen: ${response.status}`);
+  // Error handling (see point 8)
+  throw new Error(`API request failed: ${response.status}`);
 }
 
-// Content-Type prüfen und Antwort entsprechend verarbeiten
+// Check content type and process response accordingly
 const contentType = response.headers.get('content-type');
 if (contentType && contentType.includes('application/json')) {
   return await response.json();
@@ -141,61 +141,61 @@ if (contentType && contentType.includes('application/json')) {
 
 ### 7. Logging (Post-Request)
 
-Nach Erhalt wird die Antwort protokolliert:
+After receipt, the response is logged:
 
 ```typescript
-// Protokollierung der Antwort mit HttpUtil
+// Response logging with HttpUtil
 await HttpUtil.logResponse(
-  requestId,        // UUID zur Nachverfolgung
-  'API',            // Service-Präfix für Logs
-  response,         // Die vollständige Response
-  requestDuration   // Dauer der Anfrage in ms
+  requestId,        // UUID for tracking
+  'API',            // Service prefix for logs
+  response,         // The complete response
+  requestDuration   // Request duration in ms
 );
 ```
 
-Die Protokollierung umfasst:
-- Antwort-Status und Status-Text
-- Antwort-Header
-- Antwortzeit in Millisekunden
-- Bei aktiviertem Debug-Logging: Antwort-Body (gekürzt auf konfigurierte Maximallänge)
+Logging includes:
+- Response status and status text
+- Response headers
+- Response time in milliseconds
+- With debug logging enabled: Response body (truncated to configured maximum length)
 
-### 8. Fehlerbehandlung
+### 8. Error Handling
 
-Fehler werden strukturiert behandelt und mit Kontext angereichert:
+Errors are handled in a structured way and enriched with context:
 
 ```typescript
 try {
-  // API-Anfrage...
+  // API request...
 } catch (error) {
-  // Fehlerprotokollierung
-  console.error(`[API:${requestId}] Anfrage fehlgeschlagen nach ${requestDuration}ms: ${error.message}`);
+  // Error logging
+  console.error(`[API:${requestId}] Request failed after ${requestDuration}ms: ${error.message}`);
   
-  // Fehlerklassifizierung
+  // Error classification
   if (error.name === 'AbortError') {
-    console.error(`[API:${requestId}] Request-Timeout`);
+    console.error(`[API:${requestId}] Request timeout`);
   } else if (error.name === 'TypeError' && error.message.includes('Network request failed')) {
-    console.error(`[API:${requestId}] Netzwerkverbindungsfehler`);
+    console.error(`[API:${requestId}] Network connection error`);
   }
   
-  // Fehler weiterleiten für übergeordnete Behandlung
+  // Forward error for higher-level handling
   throw error;
 }
 ```
 
-### 9. Datenrückgabe
+### 9. Data Return
 
-Nach erfolgreicher Verarbeitung werden die Daten zurückgegeben:
+After successful processing, the data is returned:
 
 ```typescript
-// Daten an den Aufrufer zurückgeben
+// Return data to the caller
 return processedData;
 ```
 
-## Spezielle Anwendungsfälle
+## Special Use Cases
 
-### Umgang mit Weiterleitungen
+### Handling Redirects
 
-Bei Weiterleitungsantworten (Status-Codes 300-399) werden diese manuell verarbeitet:
+For redirect responses (status codes 300-399), these are processed manually:
 
 ```typescript
 if (response.status >= 300 && response.status < 400) {
@@ -204,93 +204,94 @@ if (response.status >= 300 && response.status < 400) {
 }
 ```
 
-### Authentifizierte vs. Nicht-Authentifizierte Anfragen
+### Authenticated vs. Non-Authenticated Requests
 
-- **Authentifizierte Anfragen**: Verwenden das gespeicherte Access-Token im Authorization-Header
-- **Nicht-Authentifizierte Anfragen**: Senden keine Auth-Header (z.B. WebFinger- oder OIDC-Konfigurationsanfragen)
+- **Authenticated Requests**: Use the stored access token in the Authorization header
+- **Non-Authenticated Requests**: Send no auth headers (e.g., WebFinger or OIDC configuration requests)
 
-### Deaktivierung der Logging-Funktionalität
+### Disabling Logging Functionality
 
-Das Logging kann über die Konfiguration gesteuert werden:
+Logging can be controlled via configuration:
 
 ```typescript
 // In config/app.config.ts
 logging: {
   maxBodyLogLength: 1000,
-  generateCurlCommands: true,
-  enableDebugLogging: false, // Auf true setzen, um ausführliches Logging zu aktivieren
+  generateCurlCommands: false, // Set to true to enable curl command generation
+  enableDebugLogging: false,   // Set to true to enable detailed logging
 }
 ```
 
-## Beispiel eines vollständigen Request-Flows
+## Example of a Complete Request Flow
 
-Hier ist ein vollständiges Beispiel des API-Request-Flows für das Abrufen von Benutzerinformationen:
+Here is a complete example of the API request flow for retrieving user information:
 
 ```typescript
 async function getCurrentUser() {
   const operationId = HttpUtil.generateUuid();
   
   try {
-    console.log(`[API:${operationId}] Benutzerinformationen werden abgerufen`);
+    console.log(`[API:${operationId}] Retrieving user information`);
     
-    // Verschiedene API-Endpunkte versuchen (mit Fallback)
+    // Try different API endpoints (with fallback)
     try {
-      console.log(`[API:${operationId}] Graph-Endpunkt wird versucht: /graph/v1.0/me`);
+      console.log(`[API:${operationId}] Trying Graph endpoint: /graph/v1.0/me`);
       
-      // Header erstellen
+      // Create headers
       const headers = HttpUtil.createStandardHeaders(true, this.accessToken);
       
-      // Request-Optionen erstellen
+      // Create request options
       const options = HttpUtil.createRequestOptions('GET', headers);
       
-      // URL erstellen
+      // Create URL
       const url = `${this.baseUrl}/graph/v1.0/me?$expand=memberOf`;
       
-      // Request protokollieren
+      // Log request
       HttpUtil.logRequest(operationId, 'API', url, 'GET', headers);
       
-      // Optional: cURL-Befehl generieren
+      // Optional: Generate cURL command
       if (apiConfig.logging?.generateCurlCommands) {
         const curlCommand = HttpUtil.generateCurlCommand(url, options);
-        console.log(`[API:${operationId}] Äquivalenter curl-Befehl:\n${curlCommand}`);
+        console.log(`[API:${operationId}] Equivalent curl command:\n${curlCommand}`);
       }
       
-      // Anfrage senden
+      // Send request
       const startTime = Date.now();
       const response = await fetch(url, options);
       const duration = Date.now() - startTime;
       
-      // Antwort protokollieren
+      // Log response
       await HttpUtil.logResponse(operationId, 'API', response, duration);
       
-      // Fehler prüfen
+      // Check for errors
       if (!response.ok) {
-        throw new Error(`API-Anfrage fehlgeschlagen: ${response.status}`);
+        throw new Error(`API request failed: ${response.status}`);
       }
       
-      // Antwort verarbeiten und zurückgeben
+      // Process and return response
       return await response.json();
       
     } catch (graphError) {
-      // Fallback zum regulären Endpunkt bei Fehler
-      console.error(`[API:${operationId}] Graph-Endpunkt fehlgeschlagen:`, graphError.message);
+      // Fallback to regular endpoint on error
+      console.error(`[API:${operationId}] Graph endpoint failed:`, graphError.message);
       
-      // Ähnlicher Prozess für den Fallback-Endpunkt...
+      // Similar process for the fallback endpoint...
       // [...]
     }
   } catch (error) {
-    // Allgemeine Fehlerbehandlung
-    console.error(`[API:${operationId}] Fehler beim Abrufen der Benutzerinformationen:`, error.message);
+    // General error handling
+    console.error(`[API:${operationId}] Error retrieving user information:`, error.message);
     throw error;
   }
 }
 ```
 
-## Schlüsselkonzepte und Best Practices
+## Key Concepts and Best Practices
 
-1. **Einheitlichkeit**: Alle Anfragen verwenden dieselben Dienstprogramme und Standards
-2. **Nachverfolgbarkeit**: Jede Anfrage hat eine eindeutige ID für die End-to-End-Nachverfolgung
-3. **Sicherheit**: Manuelle Weiterleitungssteuerung und Redaktierung sensibler Daten in Logs
-4. **Fehlerbehandlung**: Strukturierte Fehlererfassung und -berichterstattung
-5. **Performance-Messung**: Zeitmessung für jede Anfrage zur Leistungsüberwachung
-6. **Konfigurierbarkeit**: Logging-Verhalten ist über die Konfiguration steuerbar
+1. **Uniformity**: All requests use the same utilities and standards
+2. **Traceability**: Each request has a unique ID for end-to-end tracking
+3. **Security**: Manual redirect control and redaction of sensitive data in logs
+4. **Error Handling**: Structured error capture and reporting
+5. **Performance Measurement**: Time measurement for each request for performance monitoring
+6. **Configurability**: Logging behavior is controllable via configuration
+7. **Unified API**: Consider using the new `HttpUtil.performRequest()` method for all requests
