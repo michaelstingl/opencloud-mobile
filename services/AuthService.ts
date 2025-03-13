@@ -150,37 +150,25 @@ export class AuthService {
     try {
       console.log(`AuthService: Sending token request...`);
       
-      // Generate a request ID for this request
-      const requestId = HttpUtil.generateUuid();
-      
-      // Create standard headers with specific content type for form data that includes our requestId
-      const headers = HttpUtil.createStandardHeadersWithRequestId(
-        requestId,
-        false, 
-        undefined, 
-        'application/x-www-form-urlencoded'
-      );
-      
-      const requestStartTime = Date.now();
-      // Create the request body
-      const body = new URLSearchParams({
+      // Use the unified request method with standardized logging
+      const bodyParams = {
         grant_type: 'authorization_code',
         code,
         client_id: this.clientId,
         redirect_uri: this.redirectUri,
-      }).toString();
+      };
       
-      // Create request options using the shared utility
-      const options = HttpUtil.createRequestOptions('POST', headers, body);
+      // Additional detailed debugging
+      console.log(`AuthService: Token exchange details:`);
+      console.log(`- Token endpoint: ${tokenEndpoint}`);
+      console.log(`- Client ID: ${this.clientId}`);
+      console.log(`- Redirect URI: ${this.redirectUri}`);
       
-      // Log request details
-      HttpUtil.logRequest(requestId, 'Auth', tokenEndpoint, 'POST', headers, body);
-      
-      const response = await fetch(tokenEndpoint, options);
-      const requestDuration = Date.now() - requestStartTime;
-      
-      // Log response details
-      await HttpUtil.logResponse(requestId, 'Auth', response, requestDuration);
+      const response = await HttpUtil.performRequest(tokenEndpoint, 'POST', {
+        prefix: 'Auth',
+        contentType: 'application/x-www-form-urlencoded',
+        body: bodyParams
+      });
       
       if (!response.ok) {
         const errorText = await response.text();
@@ -202,7 +190,7 @@ export class AuthService {
         this.idToken = tokenResponse.id_token;
       }
       
-      ApiService.setCredentials(tokenResponse.access_token, this.serverUrl);
+      ApiService.setCredentials(this.serverUrl, tokenResponse.access_token);
       
       return tokenResponse;
     } catch (error) {

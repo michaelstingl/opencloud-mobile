@@ -1,4 +1,29 @@
 // Basic ApiService mock for testing
+import { HttpUtil } from './HttpUtil';
+
+// Define types used in the API
+export interface User {
+  id: string;
+  displayName: string;
+  mail: string;
+  userType: string;
+}
+
+export interface Drive {
+  id: string;
+  name: string;
+  driveType: string;
+  description?: string;
+  quota?: {
+    used: number;
+    total: number;
+  };
+}
+
+export interface DrivesResponse {
+  value: Drive[];
+}
+
 export class ApiService {
   private static serverUrl: string | null = null;
   private static token: string | null = null;
@@ -43,6 +68,13 @@ export class ApiService {
   }
   
   /**
+   * Check if service is authenticated (alias for isInitialized for better semantics)
+   */
+  static isAuthenticated(): boolean {
+    return this.isInitialized();
+  }
+  
+  /**
    * Check if service is in mock mode
    */
   static isMockMode(): boolean {
@@ -61,5 +93,101 @@ export class ApiService {
    */
   static getToken(): string | null {
     return this.token;
+  }
+  
+  /**
+   * Get the current user information
+   * @returns Promise resolving to User object
+   */
+  static async getCurrentUser(): Promise<User> {
+    if (this.mockMode) {
+      // Return mock data
+      return {
+        id: "mock-user-id",
+        displayName: "Mock User",
+        mail: "mockuser@example.com",
+        userType: "Member"
+      };
+    }
+    
+    if (!this.isAuthenticated()) {
+      throw new Error('Not authenticated');
+    }
+    
+    try {
+      const url = `${this.serverUrl}/graph/v1.0/me?$expand=memberOf`;
+      
+      // Use the unified request method with standardized logging
+      const response = await HttpUtil.performRequest(url, 'GET', {
+        prefix: 'API',
+        token: this.token
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to get user info: ${response.status} ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('[API] Error getting current user:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get drives/spaces for the current user
+   * @returns Promise resolving to a DrivesResponse object
+   */
+  static async getUserDrives(): Promise<DrivesResponse> {
+    if (this.mockMode) {
+      // Return mock data
+      return {
+        value: [
+          {
+            id: "mock-drive-1",
+            name: "Personal Drive",
+            driveType: "personal",
+            description: "Your personal space",
+            quota: {
+              used: 2.5 * 1024 * 1024 * 1024, // 2.5 GB
+              total: 10 * 1024 * 1024 * 1024  // 10 GB
+            }
+          },
+          {
+            id: "mock-drive-2",
+            name: "Project X",
+            driveType: "project",
+            description: "Shared project space",
+            quota: {
+              used: 7.2 * 1024 * 1024 * 1024, // 7.2 GB
+              total: 50 * 1024 * 1024 * 1024  // 50 GB
+            }
+          }
+        ]
+      };
+    }
+    
+    if (!this.isAuthenticated()) {
+      throw new Error('Not authenticated');
+    }
+    
+    try {
+      const url = `${this.serverUrl}/graph/v1.0/drives`;
+      
+      // Use the unified request method with standardized logging
+      const response = await HttpUtil.performRequest(url, 'GET', {
+        prefix: 'API',
+        token: this.token
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to get drives: ${response.status} ${response.statusText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('[API] Error getting user drives:', error);
+      throw error;
+    }
   }
 }
