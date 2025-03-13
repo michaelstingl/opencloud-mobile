@@ -20,9 +20,10 @@ module.exports = {
         'guides/getting-started',
         'guides/configuration',
         'guides/authentication',
-        'guides/http-standards',
+        'guides/http-standards/index',
         'guides/openapi-management',
         'guides/api-request-flow',
+        'guides/api-communication',
       ],
     },
     {
