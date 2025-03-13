@@ -11,6 +11,17 @@ jest.mock("../../config/app.config", () => ({
     redirectUri: "oc://mock.redirect",
     defaultScopes: "openid profile email",
   },
+  apiConfig: {
+    headers: {
+      userAgent: "MockUserAgent",
+      useRequestId: true,
+    },
+    logging: {
+      enableDebugLogging: false,
+      maxBodyLogLength: 1000,
+      generateCurlCommands: false,
+    },
+  },
 }));
 
 global.fetch = jest.fn();
@@ -211,7 +222,20 @@ describe("AuthService", () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
+        status: 200,
+        statusText: "OK",
         json: async () => mockTokenResponse,
+        headers: {
+          get: (name: string) => {
+            if (name.toLowerCase() === 'x-request-id') {
+              return 'test-request-id';
+            }
+            return null;
+          },
+          entries: () => {
+            return [['content-type', 'application/json'], ['x-request-id', 'test-request-id']];
+          }
+        },
       });
 
       // Act
@@ -242,13 +266,26 @@ describe("AuthService", () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
+        status: 400,
         statusText: "Bad Request",
+        text: async () => "Bad Request",
+        headers: {
+          get: (name: string) => {
+            if (name.toLowerCase() === 'x-request-id') {
+              return 'test-request-id';
+            }
+            return null;
+          },
+          entries: () => {
+            return [['content-type', 'application/json'], ['x-request-id', 'test-request-id']];
+          }
+        },
       });
 
       // Act & Assert
       await expect(
         AuthService.exchangeCodeForTokens("auth-code"),
-      ).rejects.toThrow("Token exchange failed: Bad Request");
+      ).rejects.toThrow("Token exchange failed: 400 Bad Request");
     });
   });
 });

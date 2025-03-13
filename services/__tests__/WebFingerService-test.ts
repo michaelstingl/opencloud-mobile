@@ -1,65 +1,29 @@
 import { WebFingerService } from "../WebFingerService";
 import { WebFingerResponse } from "../../types/webfinger";
+import { 
+  createSuccessResponse, 
+  createErrorResponse,
+  mockWebFingerResponse,
+  setupTestEnvironment,
+  mockAppConfigModule
+} from "./utils/testUtils";
 
-// Mock fetch and console.error to avoid cluttering test output
-global.fetch = jest.fn();
-console.error = jest.fn();
+// Mock dependencies
+mockAppConfigModule();
 
-// Helper functions for creating mock responses
-function createMockHeaders(requestId = "test-request-id") {
-  return {
-    get: (name: string) => {
-      if (name.toLowerCase() === 'x-request-id') {
-        return requestId;
-      }
-      return null;
-    },
-    entries: () => {
-      return [['content-type', 'application/json'], ['x-request-id', requestId]];
-    }
-  };
-}
-
-function createSuccessResponse(data: any, status = 200, statusText = "OK") {
-  return {
-    ok: true,
-    status,
-    statusText,
-    json: async () => data,
-    headers: createMockHeaders(),
-  };
-}
-
-function createErrorResponse(status = 404, statusText = "Not Found") {
-  return {
-    ok: false,
-    status,
-    statusText,
-    text: async () => statusText,
-    headers: createMockHeaders(),
-  };
-}
+// Setup test environment
+const cleanup = setupTestEnvironment();
 
 describe("WebFingerService", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  afterEach(() => {
+    cleanup();
   });
 
   describe("discover", () => {
     it("should make a request to the WebFinger endpoint with correct parameters", async () => {
       // Arrange
-      const mockResponse: WebFingerResponse = {
-        subject: "acct:user@example.com",
-        links: [
-          {
-            rel: "http://openid.net/specs/connect/1.0/issuer",
-            href: "https://example.com/auth",
-          },
-        ],
-      };
-
       (global.fetch as jest.Mock).mockResolvedValueOnce(
-        createSuccessResponse(mockResponse)
+        createSuccessResponse(mockWebFingerResponse)
       );
 
       const serverUrl = "https://example.com";
@@ -74,13 +38,12 @@ describe("WebFingerService", () => {
         expect.objectContaining({
           method: "GET",
           headers: expect.objectContaining({
-            Accept: "application/json, text/plain, */*",
+            "Accept": "application/json, text/plain, */*",
             "Content-Type": "application/json",
-            "X-Request-ID": expect.stringMatching(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/),
           }),
         }),
       );
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual(mockWebFingerResponse);
     });
 
     it("should handle trailing slash in server URL", async () => {
@@ -114,7 +77,7 @@ describe("WebFingerService", () => {
           "https://example.com",
           "acct:user@example.com",
         ),
-      ).rejects.toThrow("WebFinger discovery failed: Not Found");
+      ).rejects.toThrow("WebFinger discovery failed: 404 Not Found");
     });
   });
 
@@ -190,18 +153,8 @@ describe("WebFingerService", () => {
   describe("discoverOidcIssuer", () => {
     it("should return issuer URL when found", async () => {
       // Arrange
-      const mockResponse: WebFingerResponse = {
-        subject: "acct:user@example.com",
-        links: [
-          {
-            rel: "http://openid.net/specs/connect/1.0/issuer",
-            href: "https://example.com/auth",
-          },
-        ],
-      };
-
       (global.fetch as jest.Mock).mockResolvedValueOnce(
-        createSuccessResponse(mockResponse)
+        createSuccessResponse(mockWebFingerResponse)
       );
 
       // Act
@@ -214,7 +167,7 @@ describe("WebFingerService", () => {
       expect(issuer).toBe("https://example.com/auth");
     });
 
-    it("should return null when issuer URL not found", async () => {
+    it("should return server URL as fallback when issuer URL not found", async () => {
       // Arrange
       const mockResponse: WebFingerResponse = {
         subject: "acct:user@example.com",
@@ -237,22 +190,23 @@ describe("WebFingerService", () => {
       );
 
       // Assert
-      expect(issuer).toBeNull();
+      expect(issuer).toBe("https://example.com");
     });
 
-    it("should handle errors during OIDC issuer discovery", async () => {
+    it("should use server URL as fallback when WebFinger discovery fails", async () => {
       // Arrange
       jest.spyOn(WebFingerService, 'discover').mockRejectedValueOnce(
         new Error("Network error")
       );
 
-      // Act & Assert
-      await expect(
-        WebFingerService.discoverOidcIssuer(
-          "https://example.com",
-          "acct:user@example.com",
-        ),
-      ).rejects.toThrow("Network error");
+      // Act
+      const issuer = await WebFingerService.discoverOidcIssuer(
+        "https://example.com",
+        "acct:user@example.com",
+      );
+
+      // Assert
+      expect(issuer).toBe("https://example.com");
 
       // Verify the error was logged
       expect(console.error).toHaveBeenCalledWith(

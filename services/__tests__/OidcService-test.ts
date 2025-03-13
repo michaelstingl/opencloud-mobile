@@ -6,6 +6,19 @@ import { OpenIDConfiguration } from "../../types/oidc";
 global.fetch = jest.fn();
 console.error = jest.fn();
 jest.mock("../WebFingerService");
+jest.mock("../../config/app.config", () => ({
+  apiConfig: {
+    headers: {
+      userAgent: "MockUserAgent",
+      useRequestId: true,
+    },
+    logging: {
+      enableDebugLogging: false,
+      maxBodyLogLength: 1000,
+      generateCurlCommands: false,
+    },
+  },
+}));
 
 describe("OidcService", () => {
   beforeEach(() => {
@@ -27,7 +40,20 @@ describe("OidcService", () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
+        status: 200,
+        statusText: "OK",
         json: async () => mockConfig,
+        headers: {
+          get: (name: string) => {
+            if (name.toLowerCase() === 'x-request-id') {
+              return 'test-request-id';
+            }
+            return null;
+          },
+          entries: () => {
+            return [['content-type', 'application/json'], ['x-request-id', 'test-request-id']];
+          }
+        },
       });
 
       // Act
@@ -41,7 +67,7 @@ describe("OidcService", () => {
         expect.objectContaining({
           method: "GET",
           headers: expect.objectContaining({
-            Accept: "application/json",
+            "Accept": "application/json, text/plain, */*",
           }),
         }),
       );
@@ -52,7 +78,20 @@ describe("OidcService", () => {
       // Arrange
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
+        status: 200,
+        statusText: "OK",
         json: async () => ({}),
+        headers: {
+          get: (name: string) => {
+            if (name.toLowerCase() === 'x-request-id') {
+              return 'test-request-id';
+            }
+            return null;
+          },
+          entries: () => {
+            return [['content-type', 'application/json'], ['x-request-id', 'test-request-id']];
+          }
+        },
       });
 
       // Act
@@ -69,13 +108,26 @@ describe("OidcService", () => {
       // Arrange
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
+        status: 404,
         statusText: "Not Found",
+        text: async () => "Not Found",
+        headers: {
+          get: (name: string) => {
+            if (name.toLowerCase() === 'x-request-id') {
+              return 'test-request-id';
+            }
+            return null;
+          },
+          entries: () => {
+            return [['content-type', 'text/plain'], ['x-request-id', 'test-request-id']];
+          }
+        },
       });
 
       // Act & Assert
       await expect(
         OidcService.fetchConfiguration("https://example.com/auth"),
-      ).rejects.toThrow("Failed to fetch OIDC configuration: Not Found");
+      ).rejects.toThrow("Failed to fetch OIDC configuration: 404 Not Found");
     });
   });
 
@@ -98,7 +150,20 @@ describe("OidcService", () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
+        status: 200,
+        statusText: "OK",
         json: async () => mockConfig,
+        headers: {
+          get: (name: string) => {
+            if (name.toLowerCase() === 'x-request-id') {
+              return 'test-request-id';
+            }
+            return null;
+          },
+          entries: () => {
+            return [['content-type', 'application/json'], ['x-request-id', 'test-request-id']];
+          }
+        },
       });
 
       // Act

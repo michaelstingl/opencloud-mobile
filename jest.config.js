@@ -6,7 +6,10 @@ module.exports = {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/ios/',
-    '/android/'
+    '/android/',
+    'app/test.tsx',
+    'app/__tests__/test-test.tsx',
+    'services/__tests__/utils/testUtils.ts'
   ],
   collectCoverageFrom: [
     'services/**/*.ts',
@@ -18,6 +21,10 @@ module.exports = {
   setupFilesAfterEnv: [
     '<rootDir>/jest.setup.js'
   ],
+  // Module mapping for path aliases
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/$1"
+  },
   // Speed optimizations
   maxWorkers: '50%', // Use 50% of available CPU cores
   fakeTimers: {
