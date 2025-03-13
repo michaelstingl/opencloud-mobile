@@ -5,6 +5,119 @@ import { apiConfig } from '../../config/app.config';
  */
 export class HttpUtil {
   /**
+   * Log a mock request and response for demo mode
+   * Simulates the same logging that would occur for a real API call
+   * 
+   * @param url The URL that would be requested
+   * @param method The HTTP method that would be used
+   * @param mockResponse The mock response data to be logged
+   * @param options Additional options (same as performRequest)
+   */
+  static logMockRequest(
+    url: string,
+    method: string = 'GET',
+    mockResponse: any,
+    options: {
+      prefix: string;
+      headers?: Record<string, string>;
+      token?: string;
+      body?: any;
+      contentType?: string;
+      statusCode?: number;
+    }
+  ): void {
+    const {
+      prefix,
+      headers: additionalHeaders = {},
+      token,
+      body,
+      contentType = 'application/json',
+      statusCode = 200
+    } = options;
+    
+    // Generate a request ID for tracking
+    const requestId = this.generateUuid();
+    
+    // Set up headers with request ID
+    const needsAuth = !!token;
+    const baseHeaders = this.createStandardHeadersWithRequestId(
+      requestId,
+      needsAuth,
+      token,
+      contentType
+    );
+    
+    // Merge with additional headers
+    const headers = {
+      ...baseHeaders,
+      ...additionalHeaders
+    };
+    
+    // Prepare request body if needed
+    let bodyContent: string | undefined;
+    
+    if (body) {
+      if (contentType === 'application/json') {
+        bodyContent = JSON.stringify(body);
+      } else if (contentType === 'application/x-www-form-urlencoded') {
+        if (typeof body === 'object') {
+          // Convert object to URL params
+          const params = new URLSearchParams();
+          Object.entries(body).forEach(([key, value]) => {
+            params.append(key, String(value));
+          });
+          bodyContent = params.toString();
+        } else {
+          bodyContent = String(body);
+        }
+      } else {
+        // For other content types, just stringify
+        bodyContent = String(body);
+      }
+    }
+    
+    console.log(`[${prefix}:${requestId}] 🔶 MOCK REQUEST 🔶`);
+    
+    // Log request details - basic info always logged
+    this.logRequest(requestId, prefix, url, method, headers, bodyContent);
+    
+    // Create mock response headers
+    const mockHeaders = new Headers({
+      'content-type': contentType,
+      'x-request-id': requestId,
+      'x-mock-response': 'true'
+    });
+    
+    // Create a mock Response object
+    const mockResponseObj = new Response(
+      JSON.stringify(mockResponse),
+      {
+        status: statusCode,
+        statusText: statusCode === 200 ? 'OK' : 'Error',
+        headers: mockHeaders
+      }
+    );
+    
+    // Log mock response - always log basic info
+    console.log(`[${prefix}:${requestId}] 🔶 MOCK RESPONSE 🔶`);
+    console.log(`[${prefix}:${requestId}] Response status: ${statusCode} ${statusCode === 200 ? 'OK' : 'Error'}`);
+    
+    // Only log detailed response body in development mode
+    if (apiConfig.logging?.enableDebugLogging) {
+      console.log(`[${prefix}:${requestId}] Response body (JSON):`, JSON.stringify(mockResponse, null, 2));
+    } else {
+      // In production mode, just log that a mock response was used
+      console.log(`[${prefix}:${requestId}] Mock response used. Enable debug logging to see details.`);
+    }
+    
+    // Generate curl command for debugging if enabled (only in development mode)
+    if (apiConfig.logging?.generateCurlCommands) {
+      const fetchOptions = this.createRequestOptions(method, headers, bodyContent);
+      const curlCommand = this.generateCurlCommand(url, fetchOptions);
+      console.log(`[${prefix}:${requestId}] 🔶 MOCK curl command for debugging:\n${curlCommand}`);
+    }
+  }
+  /**
    * Generate a UUID v4 for request correlation and tracing
    * @returns A UUID v4 string
    */

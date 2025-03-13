@@ -101,13 +101,25 @@ export class ApiService {
    */
   static async getCurrentUser(): Promise<User> {
     if (this.mockMode) {
-      // Return mock data
-      return {
+      // Create mock data
+      const mockUser = {
         id: "mock-user-id",
         displayName: "Mock User",
         mail: "mockuser@example.com",
         userType: "Member"
       };
+      
+      // Log the mock request and response
+      if (this.serverUrl) {
+        const mockUrl = `${this.serverUrl}/graph/v1.0/me?$expand=memberOf`;
+        HttpUtil.logMockRequest(mockUrl, 'GET', mockUser, {
+          prefix: 'API',
+          token: this.token || 'mock-token'
+        });
+      }
+      
+      // Return mock data
+      return mockUser;
     }
     
     if (!this.isAuthenticated()) {
@@ -140,8 +152,8 @@ export class ApiService {
    */
   static async getUserDrives(): Promise<DrivesResponse> {
     if (this.mockMode) {
-      // Return mock data
-      return {
+      // Create mock data
+      const mockDrives = {
         value: [
           {
             id: "mock-drive-1",
@@ -165,6 +177,18 @@ export class ApiService {
           }
         ]
       };
+      
+      // Log the mock request and response
+      if (this.serverUrl) {
+        const mockUrl = `${this.serverUrl}/graph/v1.0/drives`;
+        HttpUtil.logMockRequest(mockUrl, 'GET', mockDrives, {
+          prefix: 'API',
+          token: this.token || 'mock-token'
+        });
+      }
+      
+      // Return mock data
+      return mockDrives;
     }
     
     if (!this.isAuthenticated()) {

@@ -67,6 +67,13 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
   - Curl command generation for debugging
 - Secure handling of sensitive information (tokens are automatically redacted)
 - Request IDs are used for request tracking and correlation
+- Mock data mode with detailed logging:
+  - Use `ApiService.enableMockDataMode(mockToken, mockServerUrl)` to enable
+  - Mock requests and responses are logged with 🔶 visual markers
+  - Mock requests use the same logging format as real requests
+  - Detailed logging only shown in development mode
+  - Simulated curl commands for mock requests are generated
+  - Great for testing without a real server or in demo mode
 - Graph API endpoints follow Microsoft Graph API structure
   - User information: `/graph/v1.0/me?$expand=memberOf`
   - Drives/spaces: `/graph/v1.0/drives`
