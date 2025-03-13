@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Testing & Code Coverage
 
-OpenCloud Mobile uses Jest for unit and integration testing. This document outlines our testing approach, best practices, and how to run tests efficiently.
+OpenCloud Mobile uses Jest for unit and integration testing along with @testing-library/react-native for component testing. This document outlines our testing approach, best practices, and how to run tests efficiently.
 
 ## Running Tests
 
@@ -52,6 +52,25 @@ services/
 
 - Component tests: `ComponentName-test.tsx`
 - Service/utility tests: `ServiceName-test.ts`
+
+### Component Testing
+
+For React component testing, we use @testing-library/react-native:
+
+```typescript
+import React from 'react';
+import { render } from '@testing-library/react-native';
+import MyComponent from '../MyComponent';
+
+describe('MyComponent', () => {
+  it('renders correctly', () => {
+    const { getByText } = render(<MyComponent />);
+    
+    // Check for specific text elements
+    expect(getByText('Expected Text')).toBeTruthy();
+  });
+});
+```
 
 ### Test Structure Example
 
@@ -190,6 +209,39 @@ We've implemented several optimizations to improve test speed:
 - `--no-watchman` flag for fast runs
 - Fake timers for timer-heavy tests
 - Caching for faster repeated runs
+
+## Code Quality and Linting
+
+We use ESLint to maintain code quality standards. To run the linter:
+
+```bash
+npx expo lint
+```
+
+### ESLint Guidelines
+
+- Fix all errors and warnings when possible
+- When ESLint indicates unused variables or imports:
+  - If they'll be needed in the future, keep them with appropriate comments
+  - Use `// eslint-disable-next-line` with explanation comments
+
+Example for documenting intentionally unused imports:
+```typescript
+// WebFingerService is used for discovery through OidcService's discoverConfiguration function
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { WebFingerService } from './WebFingerService';
+```
+
+Example for documenting intentionally excluded useEffect dependencies:
+```typescript
+useEffect(() => {
+  // Effect implementation...
+  
+  // loadData is intentionally excluded from deps to only load data on mount
+  // and prevent unnecessary API requests. Manual refresh is available via pull-to-refresh.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+```
 
 For large test suites, use the `test:fast` command with a specific pattern:
 

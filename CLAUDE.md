@@ -86,6 +86,13 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Keep components focused on a single responsibility
 - Store tests in `__tests__` directories with naming pattern `ComponentName-test.tsx` or `ServiceName-test.ts`
 - Write meaningful comments for complex logic
+- When ESLint indicates unused variables or imports:
+  - If they'll be needed in the future or are implicitly used, keep them with appropriate comments
+  - Add explanatory ESLint-disable comments to document why rules are ignored
+  - Example: `// eslint-disable-next-line @typescript-eslint/no-unused-vars`
+- When excluding useEffect dependencies:
+  - Document the reason with clear comments explaining the decision
+  - Example: `// loadData is intentionally excluded to only load on mount`
 
 ## Authentication
 - The app uses OpenID Connect (OIDC) with WebFinger discovery
