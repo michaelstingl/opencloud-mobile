@@ -17,6 +17,10 @@ jobs:
   test:
     name: Run Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write  # For PR comments
+      security-events: write  # For code scanning updates
     
     steps:
       - name: Checkout repository

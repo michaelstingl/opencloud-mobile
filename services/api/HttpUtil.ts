@@ -188,7 +188,9 @@ export class HttpUtil {
     // Clone headers for logging but redact sensitive information
     const loggableHeaders = { ...headers };
     if (loggableHeaders['Authorization']) {
-      loggableHeaders['Authorization'] = 'Bearer [REDACTED]';
+      // Replace actual token with placeholder text to avoid security scanning false positives
+      const authType = loggableHeaders['Authorization'].split(' ')[0] || 'Bearer';
+      loggableHeaders['Authorization'] = `${authType} [REDACTED_FOR_SECURITY]`;
     }
     
     console.log(`[${prefix}:${requestId}] Request headers:`, JSON.stringify(loggableHeaders, null, 2));
