@@ -233,6 +233,140 @@ export class HttpUtil {
       // Log all response headers
       const headerEntries = Array.from(response.headers.entries());
       console.log(`[${prefix}:${requestId}] Response headers:`, JSON.stringify(Object.fromEntries(headerEntries), null, 2));
+      
+      // Log response body if debug logging is enabled
+      // Clone the response first because reading the body is a one-time operation
+      try {
+        const clonedResponse = response.clone();
+        const contentType = response.headers.get('content-type') || '';
+        const maxLength = apiConfig.logging?.maxBodyLogLength || 1000;
+        
+        if (contentType.includes('application/json')) {
+          const responseJson = await clonedResponse.json();
+          console.log(`[${prefix}:${requestId}] Response body (JSON):`, 
+            JSON.stringify(responseJson, null, 2).substring(0, maxLength));
+          
+          if (JSON.stringify(responseJson).length > maxLength) {
+            console.log(`[${prefix}:${requestId}] Response body truncated (${JSON.stringify(responseJson).length} chars total)`);
+          }
+        } else if (contentType.includes('text/')) {
+          const responseText = await clonedResponse.text();
+          console.log(`[${prefix}:${requestId}] Response body (text, first ${maxLength} chars): ${responseText.substring(0, maxLength)}`);
+          
+          if (responseText.length > maxLength) {
+            console.log(`[${prefix}:${requestId}] Response body truncated (${responseText.length} chars total)`);
+          }
+        } else {
+          console.log(`[${prefix}:${requestId}] Response body not logged (content-type: ${contentType})`);
+        }
+      } catch (error) {
+        console.log(`[${prefix}:${requestId}] Could not log response body: ${error.message}`);
+      }
     }
+  }
+
+  /**
+   * Perform a request with standardized logging for both request and response
+   * 
+   * @param url URL to request
+   * @param method HTTP method to use
+   * @param options Additional options:
+   *   - prefix: Log prefix identifier (e.g., 'API', 'Auth')
+   *   - headers: Additional headers to include
+   *   - token: Authorization token (if needed)
+   *   - body: Request body (if needed)
+   *   - contentType: Content type (defaults to 'application/json')
+   * @returns Response object from fetch
+   */
+  static async performRequest(
+    url: string,
+    method: string = 'GET',
+    options: {
+      prefix: string;
+      headers?: Record<string, string>;
+      token?: string;
+      body?: any;
+      contentType?: string;
+    }
+  ): Promise<Response> {
+    const {
+      prefix,
+      headers: additionalHeaders = {},
+      token,
+      body,
+      contentType = 'application/json'
+    } = options;
+
+    // Generate a request ID for tracking
+    const requestId = this.generateUuid();
+    
+    // Set up headers with request ID
+    const needsAuth = !!token;
+    const baseHeaders = this.createStandardHeadersWithRequestId(
+      requestId,
+      needsAuth,
+      token,
+      contentType
+    );
+    
+    // Merge with additional headers
+    const headers = {
+      ...baseHeaders,
+      ...additionalHeaders
+    };
+    
+    // Prepare request body if needed
+    let bodyContent: string | undefined;
+    
+    if (body) {
+      if (contentType === 'application/json') {
+        bodyContent = JSON.stringify(body);
+      } else if (contentType === 'application/x-www-form-urlencoded') {
+        if (typeof body === 'object') {
+          // Convert object to URL params
+          const params = new URLSearchParams();
+          Object.entries(body).forEach(([key, value]) => {
+            params.append(key, String(value));
+          });
+          bodyContent = params.toString();
+        } else {
+          bodyContent = String(body);
+        }
+      } else {
+        // For other content types, just stringify
+        bodyContent = String(body);
+      }
+    }
+    
+    // Create fetch options
+    const fetchOptions = this.createRequestOptions(method, headers, bodyContent);
+    
+    // Log request details
+    this.logRequest(requestId, prefix, url, method, headers, bodyContent);
+    
+    // Generate curl command for debugging if enabled in config
+    if (apiConfig.logging?.generateCurlCommands) {
+      const curlCommand = this.generateCurlCommand(url, fetchOptions);
+      console.log(`[${prefix}:${requestId}] Equivalent curl command for debugging:\n${curlCommand}`);
+    }
+    
+    // Perform the actual request
+    const startTime = Date.now();
+    let response: Response;
+    
+    try {
+      response = await fetch(url, fetchOptions);
+    } catch (error) {
+      console.error(`[${prefix}:${requestId}] Request failed: ${error.message}`);
+      console.error(`[${prefix}:${requestId}] Error details:`, error);
+      throw error;
+    }
+    
+    const duration = Date.now() - startTime;
+    
+    // Log response details
+    await this.logResponse(requestId, prefix, response, duration);
+    
+    return response;
   }
 }
