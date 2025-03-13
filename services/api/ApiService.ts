@@ -114,7 +114,7 @@ export class ApiService {
         const mockUrl = `${this.serverUrl}/graph/v1.0/me?$expand=memberOf`;
         HttpUtil.logMockRequest(mockUrl, 'GET', mockUser, {
           prefix: 'API',
-          token: this.token || 'mock-token'
+          token: this.token || 'EXAMPLE_MOCK_TOKEN'
         });
       }
       
@@ -183,7 +183,7 @@ export class ApiService {
         const mockUrl = `${this.serverUrl}/graph/v1.0/drives`;
         HttpUtil.logMockRequest(mockUrl, 'GET', mockDrives, {
           prefix: 'API',
-          token: this.token || 'mock-token'
+          token: this.token || 'EXAMPLE_MOCK_TOKEN'
         });
       }
       
