@@ -41,32 +41,11 @@ export class WebFingerService {
         console.log("[WebFinger] Sending request...");
       }
       
-      // Generate a request ID for this request
-      const requestId = HttpUtil.generateUuid();
-      
-      // Create standard headers with JSON Accept type that includes our requestId
-      const headers = HttpUtil.createStandardHeadersWithRequestId(
-        requestId,
-        false, 
-        undefined, 
-        'application/json'
-      );
-      
-      // Create request options
-      const options = HttpUtil.createRequestOptions('GET', headers);
-      
-      // Log request details
-      if (apiConfig.logging?.enableDebugLogging) {
-        HttpUtil.logRequest(requestId, 'WebFinger', webFingerUrl, 'GET', headers);
-      }
-      
-      // Make the request
-      const requestStartTime = Date.now();
-      const response = await fetch(webFingerUrl, options);
-      const requestDuration = Date.now() - requestStartTime;
-      
-      // Log response details
-      await HttpUtil.logResponse(requestId, 'WebFinger', response, requestDuration);
+      // Use the unified request method with standardized logging
+      const response = await HttpUtil.performRequest(webFingerUrl, 'GET', {
+        prefix: 'WebFinger',
+        contentType: 'application/json'
+      });
       
       if (!response.ok) {
         console.error("[WebFinger] Request failed:", response.status, response.statusText);

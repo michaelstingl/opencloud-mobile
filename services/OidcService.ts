@@ -35,32 +35,11 @@ export class OidcService {
         console.log("[OIDC] Configuration URL:", configUrl);
       }
       
-      // Generate a request ID for this request
-      const requestId = HttpUtil.generateUuid();
-      
-      // Create standard headers with JSON Accept type that includes our requestId
-      const headers = HttpUtil.createStandardHeadersWithRequestId(
-        requestId,
-        false, 
-        undefined, 
-        'application/json'
-      );
-      
-      // Create request options
-      const options = HttpUtil.createRequestOptions('GET', headers);
-      
-      // Log request details
-      if (apiConfig.logging?.enableDebugLogging) {
-        HttpUtil.logRequest(requestId, 'OIDC', configUrl, 'GET', headers);
-      }
-      
-      // Make the request
-      const requestStartTime = Date.now();
-      const response = await fetch(configUrl, options);
-      const requestDuration = Date.now() - requestStartTime;
-      
-      // Log response details
-      await HttpUtil.logResponse(requestId, 'OIDC', response, requestDuration);
+      // Use the unified request method with standardized logging
+      const response = await HttpUtil.performRequest(configUrl, 'GET', {
+        prefix: 'OIDC',
+        contentType: 'application/json'
+      });
       
       if (!response.ok) {
         console.error("[OIDC] Failed to fetch configuration:", response.status, response.statusText);
