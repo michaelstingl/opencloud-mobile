@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Feature Discussions
+    url: https://github.com/michaelstingl/opencloud-mobile/discussions/categories/ideas
+    about: Discuss ideas and features before creating a feature request
+  - name: Q&A
+    url: https://github.com/michaelstingl/opencloud-mobile/discussions/categories/q-a
+    about: Ask questions about using OpenCloud Mobile
+  - name: Documentation
+    url: https://michaelstingl.github.io/opencloud-mobile/
+    about: Check the documentation for help and information
