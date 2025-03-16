@@ -143,11 +143,69 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
   import { authConfig, apiConfig } from '../config/app.config';
   ```
 
-## Git Workflow
+## Git Workflow & Best Practices
+
+### Branch Strategy
 - Create feature branches from `main` branch
-- Use descriptive branch names (e.g., `feature/login-screen`, `fix/connection-error`)
-- Write clear commit messages that describe what and why
-- Create pull requests for code review before merging to `main`
+- Use descriptive branch names with prefixes:
+  - `feature/feature-name` for new features
+  - `fix/issue-name` for bug fixes
+  - `docs/topic-name` for documentation updates
+  - `refactor/component-name` for code refactoring
+  - `test/component-name` for adding/improving tests
+
+### Pull Request Process
+1. **Create a feature branch**:
+   ```bash
+   git checkout -b feature/my-new-feature main
+   ```
+
+2. **Make changes** and run tests locally:
+   ```bash
+   npm test
+   # or for specific tests
+   npm run test:fast -- path/to/test.ts
+   ```
+
+3. **Commit changes** with clear messages:
+   ```bash
+   git commit -m "Add feature X that does Y to solve Z"
+   ```
+
+4. **Push changes** to GitHub:
+   ```bash
+   git push origin feature/my-new-feature
+   ```
+
+5. **Create a Pull Request** via GitHub UI
+   - Add a descriptive title and detailed description
+   - Reference any related issues with `#issue-number`
+   - GitHub Actions will automatically run tests on your PR
+
+6. **Wait for CI checks** to pass:
+   - Tests (Jest)
+   - Code coverage thresholds
+   - Linting rules
+
+7. **Request reviews** from team members
+
+8. **Address review feedback** with additional commits
+
+9. **Merge only when**:
+   - All tests pass in GitHub Actions
+   - Code coverage thresholds are met (currently 80%)
+   - PR has been approved by at least one reviewer
+   - All discussions are resolved
+
+10. **Delete branch** after merging
+
+### Important Rules
+- Never push untested code directly to `main`
+- Always use pull requests for code changes
+- Prefer small, focused pull requests over large ones
+- Update tests alongside code changes
+- Maintain or improve code coverage
+- Document new features in appropriate documentation files
 
 ## Security Practices
 - Dependencies are regularly updated to fix security vulnerabilities
