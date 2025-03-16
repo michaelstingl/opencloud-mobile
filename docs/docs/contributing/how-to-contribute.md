@@ -126,8 +126,27 @@ For examples, see the authentication service tests in `services/__tests__/`.
 
 1. Update the README.md or documentation with details of your changes if needed
 2. Make sure your code follows the style guidelines
-3. Make sure all tests pass
+3. Make sure all tests pass locally before submitting your PR
 4. The PR should work for both iOS and Android platforms
+5. Wait for the GitHub Actions CI checks to complete successfully:
+   - Tests (Jest)
+   - Code coverage thresholds (currently 80%)
+   - Linting rules
+6. Request reviews from team members
+7. Address any review feedback with additional commits
+8. Your PR will be merged once:
+   - All CI checks pass
+   - Required approval(s) are received
+   - All discussions are resolved
+
+### Important Guidelines
+
+- Never push untested code directly to the `main` branch
+- Always use pull requests for all changes, even small ones
+- Prefer small, focused pull requests over large ones
+- Keep API changes backward compatible when possible
+- Add migration paths for breaking changes
+- Review the security implications of your changes
 
 ## Code of Conduct
 
