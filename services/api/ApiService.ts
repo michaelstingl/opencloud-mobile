@@ -1,6 +1,11 @@
 // Basic ApiService mock for testing
 import { HttpUtil } from './HttpUtil';
 
+// Add ApiError interface to include requestId
+export interface ApiError extends Error {
+  requestId?: string;
+}
+
 // Define types used in the API
 export interface User {
   id: string;
@@ -96,6 +101,21 @@ export class ApiService {
   }
   
   /**
+   * Helper method to handle API response and extract error with request ID
+   * @param response Fetch Response object
+   * @param errorMessage Error message prefix
+   * @throws ApiError with requestId if response is not ok
+   */
+  private static handleApiResponse(response: Response, errorMessage: string): void {
+    if (!response.ok) {
+      const requestId = response.headers.get('x-request-id') || 'unknown';
+      const error = new Error(`${errorMessage}: ${response.status} ${response.statusText}`) as ApiError;
+      error.requestId = requestId;
+      throw error;
+    }
+  }
+
+  /**
    * Get the current user information
    * @returns Promise resolving to User object
    */
@@ -135,9 +155,7 @@ export class ApiService {
         token: this.token
       });
       
-      if (!response.ok) {
-        throw new Error(`Failed to get user info: ${response.status} ${response.statusText}`);
-      }
+      this.handleApiResponse(response, 'Failed to get user info');
       
       return await response.json();
     } catch (error) {
@@ -204,9 +222,7 @@ export class ApiService {
         token: this.token
       });
       
-      if (!response.ok) {
-        throw new Error(`Failed to get drives: ${response.status} ${response.statusText}`);
-      }
+      this.handleApiResponse(response, 'Failed to get drives');
       
       return await response.json();
     } catch (error) {

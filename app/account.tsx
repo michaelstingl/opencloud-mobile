@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, Alert } from 'react-native';
-import { ApiService, User, Drive } from '../services/api/ApiService';
+import { ApiService, User, Drive, ApiError } from '../services/api/ApiService';
 import { AuthService } from '../services/AuthService';
 // Kept for future authentication enhancements (token renewal, advanced logout, auth info display)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -46,38 +46,23 @@ export default function AccountScreen() {
         
         // Only set loading to false after successfully loading everything
         setLoading(false);
-      } catch (apiError) {
+      } catch (error) {
+        const apiError = error as ApiError;
         console.error('API request failed:', apiError);
         setLoading(false); // Stop loading even if there's an error
         
-        // For now, use mock data instead of showing error
-        console.log('Using mock data after API error');
-        setUser({
-          id: "error-recovery-user",
-          displayName: "Max Mustermann (Recovery)",
-          mail: "recovery@example.com",
-          userType: "Member"
-        });
+        // Extract request ID if available for debugging
+        const requestId = apiError.requestId || 'unknown';
         
-        setDrives([
-          {
-            id: "recovery-drive",
-            name: "Recovery Drive",
-            driveType: "personal",
-            description: "Created after API error"
-          }
-        ]);
+        // Set error message with debugging information
+        setError(`Could not load account data. Please try again later.${__DEV__ ? `\n\nError: ${apiError.message}\nRequest ID: ${requestId}` : ''}`);
         
         // Alert only for development purposes
         if (__DEV__) {
           Alert.alert(
             'API Error (Dev Mode)',
-            `Could not load data from server: ${apiError.message}`,
+            `Could not load data from server: ${apiError.message}\nRequest ID: ${requestId}`,
             [
-              {
-                text: 'Continue with Mock Data',
-                onPress: () => console.log('Using mock data')
-              },
               {
                 text: 'Retry',
                 onPress: () => loadData()

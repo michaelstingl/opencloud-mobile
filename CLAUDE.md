@@ -66,7 +66,16 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
   - Request/response timing
   - Curl command generation for debugging
 - Secure handling of sensitive information (tokens are automatically redacted)
-- Request IDs are used for request tracking and correlation
+- Request IDs are used for request tracking and correlation:
+  - Every request automatically gets a unique X-Request-ID header
+  - API errors include the Request ID for easier debugging
+  - The ApiService.handleApiResponse method provides consistent error handling with Request IDs
+  - Error messages in the UI include Request IDs in development mode
+- Error handling best practices:
+  - Use the ApiError interface for typed error handling
+  - Always extract and include Request IDs in error messages
+  - Use meaningful user-facing error messages instead of fallback data
+  - Follow the DRY principle with shared error handling methods
 - Mock data mode with detailed logging:
   - Use `ApiService.enableMockDataMode(mockToken, mockServerUrl)` to enable
   - Mock requests and responses are logged with 🔶 visual markers

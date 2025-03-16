@@ -173,6 +173,7 @@ When testing HTTP services:
 2. Create helper functions for standard responses
 3. Verify proper headers, request parameters, and error handling
 4. Test edge cases like network errors, timeout, and unexpected responses
+5. Verify that Request IDs are properly included in error objects
 
 Example:
 
@@ -199,6 +200,56 @@ expect(global.fetch).toHaveBeenCalledWith(
     })
   })
 );
+```
+
+### Testing Error Handling with Request IDs
+
+When testing API error handling, be sure to test that Request IDs are properly captured and included in error objects:
+
+```typescript
+describe('handleApiResponse', () => {
+  it('should throw ApiError with request ID for failed responses', () => {
+    // Arrange
+    const response = {
+      ok: false,
+      status: 404,
+      statusText: "Not Found",
+      headers: new Headers({
+        "x-request-id": "test-request-id-123"
+      })
+    } as Response;
+    
+    // Act & Assert
+    try {
+      ApiService.handleApiResponse(response, "Test operation");
+      fail("Expected error was not thrown");
+    } catch (error) {
+      // Check that the error is an ApiError with the correct properties
+      expect(error).toBeInstanceOf(Error);
+      expect((error as ApiError).requestId).toBe("test-request-id-123");
+      expect(error.message).toBe("Test operation: 404 Not Found");
+    }
+  });
+  
+  it('should use "unknown" as fallback when request ID is missing', () => {
+    // Arrange
+    const response = {
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      headers: new Headers() // No request ID header
+    } as Response;
+    
+    // Act & Assert
+    try {
+      ApiService.handleApiResponse(response, "Test operation");
+      fail("Expected error was not thrown");
+    } catch (error) {
+      // Check that the error has a fallback request ID
+      expect((error as ApiError).requestId).toBe("unknown");
+    }
+  });
+});
 ```
 
 ## Optimizing Test Performance

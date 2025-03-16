@@ -35,16 +35,14 @@ async function getCurrentUser() {
       contentType: 'application/json'
     });
     
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`Failed to get user info: ${response.status} ${response.statusText}`);
-    }
+    // Use the standard error handling helper
+    this.handleApiResponse(response, 'Failed to get user info');
     
     // Process and return response
     return await response.json();
     
   } catch (error) {
-    // Error handling
+    // Error has been enriched with requestId
     console.error(`Error fetching user information:`, error);
     throw error;
   }
@@ -214,13 +212,70 @@ const url = `${serverUrl}/graph/v1.0/drives`;
 
 For details on the authentication process, see the [Authentication](./authentication.md) guide.
 
+## Error Handling with Request IDs
+
+OpenCloud Mobile uses a standardized error handling approach that incorporates Request IDs to make debugging easier.
+
+### The ApiError Interface
+
+```typescript
+// ApiError interface for typed error handling with request IDs
+export interface ApiError extends Error {
+  requestId?: string; // Stores the x-request-id from response headers
+}
+```
+
+### Standardized Error Handling
+
+The `handleApiResponse` helper method provides consistent error handling:
+
+```typescript
+/**
+ * Helper method to handle API response and extract error with request ID
+ * @param response Fetch Response object
+ * @param errorMessage Error message prefix
+ * @throws ApiError with requestId if response is not ok
+ */
+private static handleApiResponse(response: Response, errorMessage: string): void {
+  if (!response.ok) {
+    const requestId = response.headers.get('x-request-id') || 'unknown';
+    const error = new Error(`${errorMessage}: ${response.status} ${response.statusText}`) as ApiError;
+    error.requestId = requestId;
+    throw error;
+  }
+}
+```
+
+### Error Handling in Components
+
+Error handling in UI components should show appropriate user messages while preserving debugging information:
+
+```typescript
+try {
+  // API calls...
+} catch (error) {
+  console.error('API request failed:', error);
+  
+  // Extract request ID if available
+  const requestId = (error as ApiError).requestId || 'unknown';
+  
+  // Set error message with debugging information in dev mode only
+  setError(`Could not load data. Please try again later.${__DEV__ ? 
+    `\n\nError: ${error.message}\nRequest ID: ${requestId}` : ''}`);
+}
+```
+
 ## Best Practices
 
 1. **Use the unified system**: Always use `HttpUtil.performRequest()` for all HTTP requests
 2. **Use meaningful prefixes**: Choose a clear prefix for logging (e.g., 'API', 'Auth', 'WebFinger')
-3. **Handle errors properly**: Always check response status with `if (!response.ok)`
-4. **Clone responses when needed**: Remember the response body can only be read once
-5. **Respect sensitive data**: Don't log sensitive information like auth tokens
-6. **Use configuration options**: Adjust log verbosity based on the environment
-7. **Use mock mode for testing**: Use ApiService.enableMockDataMode() for development and testing
-8. **Check mock logs**: Review mock request logs to understand API behavior in isolation
+3. **Use standard error handling**: Use the `handleApiResponse` helper for error handling
+4. **Include Request IDs in errors**: Extract and include Request IDs in all error messages
+5. **Show user-friendly messages**: Use descriptive error messages that users can understand
+6. **Provide debugging details in dev mode**: Include technical details only in __DEV__ mode
+7. **Clone responses when needed**: Remember the response body can only be read once
+8. **Respect sensitive data**: Don't log sensitive information like auth tokens
+9. **Use configuration options**: Adjust log verbosity based on the environment
+10. **Use mock mode for testing**: Use ApiService.enableMockDataMode() for development and testing
+11. **Check mock logs**: Review mock request logs to understand API behavior in isolation
+12. **Follow DRY principle**: Use shared error handling methods instead of duplicating code
