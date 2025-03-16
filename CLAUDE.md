@@ -30,13 +30,18 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - `/app` - Main application screens and navigation (using expo-router)
 - `/components` - Reusable UI components
 - `/config` - Application configuration including platform-specific settings
+- `/context` - React context providers for state management
+  - `/context/ThemeContext.tsx` - Theme state management (light/dark/system)
 - `/hooks` - Custom React hooks
+  - `/hooks/useThemeColor.ts` - Hook for accessing theme colors with fallbacks
 - `/services` - API services and data handling
   - `/services/WebFingerService.ts` - WebFinger discovery for OpenID Connect
   - `/services/OidcService.ts` - OpenID Connect operations
   - `/services/AuthService.ts` - Authentication coordination
   - `/services/api/ApiService.ts` - API client for server communication
   - `/services/api/HttpUtil.ts` - HTTP utilities for requests, logging, and debugging
+- `/themes` - Theme-related definitions
+  - `/themes/colors.ts` - Color definitions for light and dark themes
 - `/utils` - Helper functions and utilities
 - `/types` - TypeScript type definitions
   - `/types/webfinger.ts` - WebFinger response types
@@ -57,6 +62,20 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Run `npm run test:coverage` to check test coverage
 - Aim for at least 80% coverage for critical service code
 - Use descriptive test names that explain what is being tested
+
+### Running Tests with Mocks
+
+- Run specific tests with configuration file: `npm test hooks/__tests__/useThemeColor-test.ts -- --config=jest.config.js`
+- Mock modules are defined in the `/__mocks__` directory:
+  - `/__mocks__/asyncStorageMock.js` - Simulates AsyncStorage
+  - `/__mocks__/useColorSchemeMock.js` - Simulates React Native's useColorScheme
+- The Jest config maps module paths to mocks:
+  ```javascript
+  moduleNameMapper: {
+    "@react-native-async-storage/async-storage": "<rootDir>/__mocks__/asyncStorageMock.js",
+    "react-native/Libraries/Utilities/useColorScheme": "<rootDir>/__mocks__/useColorSchemeMock.js"
+  }
+  ```
 
 ## API Communication
 - All HTTP requests use the unified `HttpUtil.performRequest()` method
@@ -109,6 +128,25 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - When excluding useEffect dependencies:
   - Document the reason with clear comments explaining the decision
   - Example: `// loadData is intentionally excluded to only load on mount`
+
+## Theming
+- The app uses a dynamic theming system supporting 3 modes: Light, Dark, and System
+- Theme state is managed through React Context in `/context/ThemeContext.tsx`
+- Theme persistence uses AsyncStorage to remember user preferences between sessions
+- Color definitions are in `/themes/colors.ts` with matching props in both themes:
+  - Base colors: text, background, tint, etc.
+  - UI Elements: surface, surfaceVariant, border, etc.
+  - Status colors: success, warning, error, info
+  - Button variants: regular, disabled, etc.
+- Access theme colors using the `useThemeColor` hook:
+  ```typescript
+  const themeColors = colors[effectiveTheme];
+  ```
+- For dynamic styling, use style arrays with theme values:
+  ```typescript
+  <Text style={[styles.title, { color: themeColors.text }]}>Title</Text>
+  ```
+- Proper fallbacks are implemented for when themes change or system theme is used
 
 ## Authentication
 - The app uses OpenID Connect (OIDC) with WebFinger discovery

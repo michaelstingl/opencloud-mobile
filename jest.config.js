@@ -23,7 +23,9 @@ module.exports = {
   ],
   // Module mapping for path aliases
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/$1"
+    "^@/(.*)$": "<rootDir>/$1",
+    "@react-native-async-storage/async-storage": "<rootDir>/__mocks__/asyncStorageMock.js",
+    "react-native/Libraries/Utilities/useColorScheme": "<rootDir>/__mocks__/useColorSchemeMock.js"
   },
   // Speed optimizations
   maxWorkers: '50%', // Use 50% of available CPU cores

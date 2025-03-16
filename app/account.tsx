@@ -1,4 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
+import { useColorScheme } from 'react-native';
+import { colors } from '../themes/colors';
 import { StyleSheet, Text, View, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, Alert } from 'react-native';
 import { ApiService, User, Drive, ApiError } from '../services/api/ApiService';
 import { AuthService } from '../services/AuthService';
@@ -9,6 +12,11 @@ import { router } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 
 export default function AccountScreen() {
+  const { theme } = useContext(ThemeContext);
+  const systemTheme = useColorScheme() ?? 'light';
+  const effectiveTheme = theme === 'system' ? systemTheme : theme;
+  const themeColors = colors[effectiveTheme];
+  
   const [user, setUser] = useState<User | null>(null);
   const [drives, setDrives] = useState<Drive[]>([]);
   const [loading, setLoading] = useState(true);
@@ -105,23 +113,23 @@ export default function AccountScreen() {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading account information...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: themeColors.background }]}>
+        <ActivityIndicator size="large" color={themeColors.primary} />
+        <Text style={[styles.loadingText, { color: themeColors.textSecondary }]}>Loading account information...</Text>
       </View>
     );
   }
 
   if (error) {
     return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorTitle}>Error</Text>
-        <Text style={styles.errorMessage}>{error}</Text>
+      <View style={[styles.errorContainer, { backgroundColor: themeColors.background }]}>
+        <Text style={[styles.errorTitle, { color: themeColors.error }]}>Error</Text>
+        <Text style={[styles.errorMessage, { color: themeColors.textSecondary }]}>{error}</Text>
         <TouchableOpacity 
-          style={styles.button} 
+          style={[styles.button, { backgroundColor: themeColors.primary }]} 
           onPress={() => router.replace('/')}
         >
-          <Text style={styles.buttonText}>Return to Login</Text>
+          <Text style={[styles.buttonText, { color: themeColors.surface }]}>Return to Login</Text>
         </TouchableOpacity>
       </View>
     );
@@ -129,35 +137,50 @@ export default function AccountScreen() {
 
   return (
     <ScrollView 
-      style={styles.container}
+      style={[styles.container, { backgroundColor: themeColors.surfaceVariant }]}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl 
+          refreshing={refreshing} 
+          onRefresh={onRefresh}
+          tintColor={themeColors.primary}
+          colors={[themeColors.primary]} 
+          progressBackgroundColor={themeColors.surface}
+        />
       }
     >
       {/* User Profile Section */}
-      <View style={styles.profileSection}>
-        <View style={styles.avatarContainer}>
+      <View style={[styles.profileSection, { 
+        backgroundColor: themeColors.surface,
+        borderBottomColor: themeColors.border
+      }]}>
+        <View style={[styles.avatarContainer, { backgroundColor: themeColors.primary }]}>
           <Text style={styles.avatarText}>{user?.displayName?.charAt(0) || '?'}</Text>
         </View>
         <View style={styles.profileInfo}>
-          <Text style={styles.displayName}>{user?.displayName}</Text>
-          <Text style={styles.email}>{user?.mail}</Text>
+          <Text style={[styles.displayName, { color: themeColors.text }]}>{user?.displayName}</Text>
+          <Text style={[styles.email, { color: themeColors.textSecondary }]}>{user?.mail}</Text>
           {user?.userType && (
-            <View style={styles.userTypeTag}>
-              <Text style={styles.userTypeText}>{user.userType}</Text>
+            <View style={[styles.userTypeTag, { backgroundColor: `${themeColors.primary}20` }]}>
+              <Text style={[styles.userTypeText, { color: themeColors.primary }]}>{user.userType}</Text>
             </View>
           )}
         </View>
       </View>
 
       {/* Drives Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Your Spaces</Text>
+      <View style={[styles.sectionContainer, { 
+        backgroundColor: themeColors.surface,
+        borderColor: themeColors.border
+      }]}>
+        <Text style={[styles.sectionTitle, { color: themeColors.text }]}>Your Spaces</Text>
         {drives.length === 0 ? (
-          <Text style={styles.emptyText}>No spaces found</Text>
+          <Text style={[styles.emptyText, { color: themeColors.textDisabled }]}>No spaces found</Text>
         ) : (
           drives.map((drive) => (
-            <View key={drive.id} style={styles.driveItem}>
+            <View key={drive.id} style={[styles.driveItem, { 
+              backgroundColor: themeColors.surfaceVariant, 
+              borderColor: themeColors.border
+            }]}>
               <View style={styles.driveIconContainer}>
                 <Text style={styles.driveIcon}>
                   {drive.driveType === 'personal' ? '👤' : 
@@ -166,23 +189,26 @@ export default function AccountScreen() {
                 </Text>
               </View>
               <View style={styles.driveInfo}>
-                <Text style={styles.driveName}>{drive.name}</Text>
+                <Text style={[styles.driveName, { color: themeColors.text }]}>{drive.name}</Text>
                 {drive.description && (
-                  <Text style={styles.driveDescription}>{drive.description}</Text>
+                  <Text style={[styles.driveDescription, { color: themeColors.textSecondary }]}>{drive.description}</Text>
                 )}
-                <Text style={styles.driveType}>{drive.driveType}</Text>
+                <Text style={[styles.driveType, { color: themeColors.textDisabled }]}>{drive.driveType}</Text>
               </View>
               {drive.quota && (
                 <View style={styles.quotaContainer}>
-                  <View style={styles.quotaBar}>
+                  <View style={[styles.quotaBar, { backgroundColor: `${themeColors.border}80` }]}>
                     <View 
                       style={[
                         styles.quotaUsed, 
-                        { width: `${(drive.quota.used / drive.quota.total) * 100}%` }
+                        { 
+                          width: `${(drive.quota.used / drive.quota.total) * 100}%`,
+                          backgroundColor: themeColors.success 
+                        }
                       ]} 
                     />
                   </View>
-                  <Text style={styles.quotaText}>
+                  <Text style={[styles.quotaText, { color: themeColors.textSecondary }]}>
                     {formatBytes(drive.quota.used)} / {formatBytes(drive.quota.total)}
                   </Text>
                 </View>
@@ -193,9 +219,9 @@ export default function AccountScreen() {
       </View>
 
       {/* Action Buttons */}
-      <View style={styles.actionContainer}>
+      <View style={[styles.actionContainer, { backgroundColor: themeColors.surfaceVariant }]}>
         <TouchableOpacity 
-          style={styles.logoutButton} 
+          style={[styles.logoutButton, { backgroundColor: themeColors.error }]} 
           onPress={async () => {
             // Simple confirmation dialog
             Alert.alert(
@@ -266,7 +292,7 @@ export default function AccountScreen() {
             );
           }}
         >
-          <Text style={styles.logoutText}>Log Out</Text>
+          <Text style={[styles.logoutText, { color: themeColors.surface }]}>Log Out</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
