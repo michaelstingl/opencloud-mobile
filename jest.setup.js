@@ -13,13 +13,40 @@ global.console = {
   // Uncomment to silence certain console methods during tests
   // log: jest.fn(),
   // info: jest.fn(),
-  // debug: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
 };
 
 // Mock fetch globally
 global.fetch = jest.fn();
+
+// Mock necessary modules
+// These mocks are configured in package.json with moduleNameMapper
+
+// Mock the expo-router navigation
+jest.mock('expo-router', () => ({
+  router: {
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    canGoBack: jest.fn(() => true),
+  },
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+  })),
+}));
+
+// Mock Expo Constants
+jest.mock('expo-constants', () => ({
+  expoConfig: {
+    extra: {
+      buildNumber: "1",
+    },
+    sdkVersion: "52.0.37",
+  },
+}));
 
 // Reset all mocks after each test
 afterEach(() => {

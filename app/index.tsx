@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Alert } from "react-native";
+import { ThemeContext } from "../context/ThemeContext";
+import { useColorScheme } from "react-native";
+import { colors } from "../themes/colors";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { AuthService } from "../services/AuthService";
@@ -8,6 +11,11 @@ import * as WebBrowser from 'expo-web-browser';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Index() {
+  const { theme } = useContext(ThemeContext);
+  const systemTheme = useColorScheme() ?? 'light';
+  const effectiveTheme = theme === 'system' ? systemTheme : theme;
+  const themeColors = colors[effectiveTheme];
+  
   const [serverUrl, setServerUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -180,30 +188,38 @@ export default function Index() {
 
   return (
     <KeyboardAvoidingView 
-      style={styles.container} 
+      style={[styles.container, { backgroundColor: themeColors.background }]} 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <StatusBar style="auto" />
+      <StatusBar style={effectiveTheme === 'dark' ? "light" : "dark"} />
       
-      <View style={styles.header}>
+      <View style={[styles.header, { 
+        backgroundColor: themeColors.surface, 
+        borderBottomColor: themeColors.border 
+      }]}>
         <View style={{ width: 40 }} />
-        <Text style={styles.headerTitle}>OpenCloud</Text>
+        <Text style={[styles.headerTitle, { color: themeColors.text }]}>OpenCloud</Text>
         <TouchableOpacity 
           style={styles.settingsButton}
           onPress={() => router.push('/settings')}
         >
-          <Ionicons name="settings-outline" size={24} color="#007AFF" />
+          <Ionicons name="settings-outline" size={24} color={themeColors.primary} />
         </TouchableOpacity>
       </View>
       
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome</Text>
-        <Text style={styles.subtitle}>Connect to your server</Text>
+        <Text style={[styles.title, { color: themeColors.text }]}>Welcome</Text>
+        <Text style={[styles.subtitle, { color: themeColors.textSecondary }]}>Connect to your server</Text>
         
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { 
+              borderColor: themeColors.border,
+              color: themeColors.text,
+              backgroundColor: themeColors.surface
+            }]}
             placeholder="https://your-server.com or 'demo'"
+            placeholderTextColor={themeColors.textDisabled}
             value={serverUrl}
             onChangeText={setServerUrl}
             autoCapitalize="none"
@@ -217,13 +233,18 @@ export default function Index() {
           <TouchableOpacity 
             style={[
               styles.button, 
-              !serverUrl ? styles.buttonDisabled : null,
-              isLoading ? styles.buttonLoading : null
+              { backgroundColor: themeColors.primary },
+              !serverUrl ? { backgroundColor: themeColors.buttonDisabledBackground } : null,
+              isLoading ? { backgroundColor: themeColors.primaryVariant } : null
             ]} 
             onPress={handleConnect}
             disabled={!serverUrl || isLoading}
           >
-            <Text style={styles.buttonText}>
+            <Text style={[
+              styles.buttonText, 
+              { color: themeColors.surface },
+              !serverUrl ? { color: themeColors.buttonDisabledText } : null
+            ]}>
               {isLoading ? 'Connecting...' : 'Connect'}
             </Text>
           </TouchableOpacity>
@@ -236,7 +257,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    // backgroundColor applied dynamically
   },
   header: {
     flexDirection: 'row',
@@ -245,13 +266,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
     paddingBottom: 10,
-    backgroundColor: 'white',
+    // backgroundColor and borderBottomColor applied dynamically
     borderBottomWidth: 1,
-    borderBottomColor: '#e1e4e8',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
+    // color applied dynamically
   },
   settingsButton: {
     width: 40,
@@ -269,11 +290,12 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     marginBottom: 8,
+    // color applied dynamically
   },
   subtitle: {
     fontSize: 18,
-    color: "#666",
     marginBottom: 40,
+    // color applied dynamically
   },
   inputContainer: {
     width: "100%",
@@ -281,26 +303,21 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: "#ddd",
+    // borderColor, color, backgroundColor applied dynamically
     borderRadius: 8,
     paddingHorizontal: 16,
     fontSize: 16,
     marginBottom: 16,
   },
   button: {
-    backgroundColor: "#007AFF",
+    // backgroundColor applied dynamically
     padding: 15,
     borderRadius: 8,
     alignItems: "center",
   },
-  buttonDisabled: {
-    backgroundColor: "#cccccc",
-  },
-  buttonLoading: {
-    backgroundColor: "#4aa3ff",
-  },
+  // buttonDisabled and buttonLoading styles applied dynamically
   buttonText: {
-    color: "white",
+    // color applied dynamically
     fontSize: 16,
     fontWeight: "bold",
   },

@@ -1,32 +1,26 @@
+import { useContext } from 'react';
 import { useColorScheme } from 'react-native';
+import { ThemeContext, ThemeMode } from '../context/ThemeContext';
+import { colors } from '../themes/colors';
+
+export type ColorName = keyof typeof colors.light & keyof typeof colors.dark;
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+  colorName: ColorName
 ) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
+  const { theme } = useContext(ThemeContext);
+  const systemTheme = useColorScheme() ?? 'light';
+  const effectiveTheme = theme === 'system' ? systemTheme : theme;
+  
+  const colorFromProps = props[effectiveTheme];
 
   if (colorFromProps) {
     return colorFromProps;
   } else {
-    return Colors[theme][colorName];
+    return colors[effectiveTheme][colorName];
   }
 }
 
-const Colors = {
-  light: {
-    text: '#000',
-    background: '#fff',
-    tint: '#2f95dc',
-    tabIconDefault: '#ccc',
-    tabIconSelected: '#2f95dc',
-  },
-  dark: {
-    text: '#fff',
-    background: '#000',
-    tint: '#fff',
-    tabIconDefault: '#ccc',
-    tabIconSelected: '#fff',
-  },
-};
+// Export the colors for direct access when needed
+export { colors };
