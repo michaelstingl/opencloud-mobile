@@ -6,6 +6,7 @@ import { Linking, Alert, Platform } from "react-native";
 import { router } from "expo-router";
 import { AuthService } from "../services/AuthService";
 import { ApiService } from "../services/api/ApiService";
+import { ThemeProvider } from "../context/ThemeContext";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -157,20 +158,22 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="settings" options={{ 
-        headerShown: false,
-        presentation: 'modal'
-      }} />
-      <Stack.Screen name="account" options={{ 
-        title: "Your Account",
-        headerBackVisible: false,
-        gestureEnabled: false
-      }} />
-      <Stack.Screen name="test" options={{ 
-        title: "Test Screen"
-      }} />
-    </Stack>
+    <ThemeProvider>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="settings" options={{ 
+          headerShown: false,
+          presentation: 'modal'
+        }} />
+        <Stack.Screen name="account" options={{ 
+          title: "Your Account",
+          headerBackVisible: false,
+          gestureEnabled: false
+        }} />
+        <Stack.Screen name="test" options={{ 
+          title: "Test Screen"
+        }} />
+      </Stack>
+    </ThemeProvider>
   );
 }
