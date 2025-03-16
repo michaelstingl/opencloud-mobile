@@ -9,8 +9,8 @@ describe("ApiService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     
-    // Reset the ApiService state
-    ApiService.setCredentials("https://test-server.com", "mock-token");
+    // Reset the ApiService state with example test credentials
+    ApiService.setCredentials("https://test-server.com", "EXAMPLE_TEST_TOKEN");
   });
   
   describe("handleApiResponse", () => {
@@ -75,7 +75,7 @@ describe("ApiService", () => {
   describe("getCurrentUser", () => {
     it("should return mock user in mock mode", async () => {
       // Arrange
-      ApiService.enableMockDataMode("mock-token", "https://mock-server.com");
+      ApiService.enableMockDataMode("EXAMPLE_TEST_TOKEN", "https://mock-server.com");
       jest.spyOn(HttpUtil, "logMockRequest").mockImplementation(() => {});
       
       // Act
@@ -120,7 +120,7 @@ describe("ApiService", () => {
         "GET",
         expect.objectContaining({
           prefix: "API",
-          token: "mock-token"
+          token: "EXAMPLE_TEST_TOKEN"
         })
       );
     });
