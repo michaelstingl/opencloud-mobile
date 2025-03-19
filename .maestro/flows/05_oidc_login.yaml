@@ -1,0 +1,22 @@
+appId: com.anonymous.opencloud-mobile
+---
+- launchApp
+- takeScreenshot: 
+    path: ".maestro/screenshots/oidc_flow/01_initial_screen"
+
+# Enter server URL in text field
+- tapOn: "https://your-server.com or 'demo'"
+- takeScreenshot: 
+    path: ".maestro/screenshots/oidc_flow/02_url_field_tapped"
+- inputText: "demo"
+- takeScreenshot: 
+    path: ".maestro/screenshots/oidc_flow/03_demo_entered"
+
+# Tap Connect button after it becomes enabled
+- assertVisible: "Connect"
+- takeScreenshot: 
+    path: ".maestro/screenshots/oidc_flow/04_connect_button_enabled"
+- tapOn: "Connect"
+# This step might fail as the app navigates to the OIDC provider
+- takeScreenshot: 
+    path: ".maestro/screenshots/oidc_flow/05_after_connect_tapped"

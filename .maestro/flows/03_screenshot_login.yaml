@@ -1,0 +1,16 @@
+appId: com.anonymous.opencloud-mobile
+---
+- launchApp
+- takeScreenshot: ".maestro/screenshots/login_flow/01_app_launched"
+
+# Capture the welcome screen
+- tapOn: "https://your-server.com or 'demo'"
+- takeScreenshot: ".maestro/screenshots/login_flow/02_input_field_tapped"
+
+# Enter server URL
+- inputText: "https://shniq.cloud"
+- takeScreenshot: ".maestro/screenshots/login_flow/03_server_url_entered"
+
+# Connect button should be enabled
+- assertVisible: "Connect"
+- takeScreenshot: ".maestro/screenshots/login_flow/04_connect_button_enabled"
