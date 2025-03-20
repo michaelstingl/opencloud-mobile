@@ -61,14 +61,17 @@ E2E tests are located in the `.maestro/flows/` directory at the root of the proj
 ```
 .maestro/
   ├── README.md
-  ├── env.example.json  # Template for test credentials
-  ├── run-with-credentials.js  # Helper script for using credentials
+  ├── OIDC_AGENT_SETUP.md     # Guide for token-based authentication
+  ├── env.example.json        # Template for test credentials
+  ├── run-with-credentials.js # Helper script for using credentials
+  ├── run-with-oidc-token.js  # Helper script for token authentication
   └── flows/
       ├── 01_login_screen.yaml
       ├── 02_theme_settings.yaml
       ├── 03_screenshot_login.yaml
       ├── 04_login_with_confirmation.yaml
-      └── 05_oidc_login.yaml
+      ├── 05_oidc_login.yaml
+      └── 06_oidc_token_login.yaml
 ```
 
 ## Running Tests
@@ -86,6 +89,7 @@ npm run test:e2e:screenshots        # Capture login screenshots
 npm run test:e2e:login:confirmation # Test with dialog confirmation
 npm run test:e2e:oidc               # Test OIDC authentication flow
 npm run test:e2e:oidc:credentials   # Run OIDC test with credentials
+npm run test:e2e:oidc:token         # Run OIDC test with token injection
 ```
 
 ### Prerequisites for Running Tests
@@ -180,6 +184,10 @@ These system dialogs **require manual intervention** as Maestro cannot directly 
    - Create another test that assumes the dialog is already confirmed
    - Run these tests separately with manual intervention between them
 
+3. **Token-based authentication (recommended)**:
+   - Use the OIDC token injection approach to bypass WebView authentication entirely
+   - See the [Token-Based Authentication](#token-based-authentication) section below
+
 ### Example: OIDC Login Test with Manual Intervention
 
 ```yaml
@@ -217,6 +225,80 @@ appId: eu.opencloud.mobile
 - waitForAnimationToEnd
 # Verify successful login by checking for dashboard elements
 - assertVisible: "Files"
+```
+
+## Token-Based Authentication
+
+To overcome the limitations of WebView-based authentication in automated tests, we've implemented a token-based approach using oidc-agent. This method allows tests to bypass the WebView authentication flow entirely.
+
+### Setting up oidc-agent
+
+1. Install oidc-agent:
+   ```bash
+   # macOS
+   brew install oidc-agent
+   
+   # Start the agent
+   eval "$(oidc-agent)"
+   ```
+
+2. Configure an OIDC profile:
+   ```bash
+   oidc-gen YourProfileName --manual
+   ```
+
+3. Follow the full setup instructions in [.maestro/OIDC_AGENT_SETUP.md](./.maestro/OIDC_AGENT_SETUP.md)
+
+### Running Token-Based Tests
+
+Once oidc-agent is set up, you can run token-based authentication tests:
+
+```bash
+# Run with default profile
+npm run test:e2e:oidc:token
+
+# Or specify a custom profile and server
+node .maestro/run-with-oidc-token.js .maestro/flows/06_oidc_token_login.yaml YourProfileName https://your-server.com
+```
+
+### How Token Injection Works
+
+The token-based approach:
+
+1. Retrieves an access token from oidc-agent
+2. Passes the token to the test as an environment variable
+3. Uses JavaScript injection to set the token in the app's storage
+4. Bypasses the WebView authentication flow completely
+
+This method is more reliable, faster, and doesn't require manual interaction with system dialogs.
+
+### Example: Token Injection Test
+
+```yaml
+appId: eu.opencloud.mobile
+env:
+  OIDC_ACCESS_TOKEN: ${OIDC_ACCESS_TOKEN}
+  SERVER_URL: ${SERVER_URL}
+---
+- launchApp
+# Enter server URL in text field
+- tapOn: "Server URL"
+- inputText: "${SERVER_URL}"
+
+# Inject OIDC token into app storage
+- evalScript: |
+    global.injectOidcTokens = function() {
+      const AsyncStorage = require('@react-native-async-storage/async-storage');
+      AsyncStorage.setItem('auth_tokens', JSON.stringify({
+        access_token: '${OIDC_ACCESS_TOKEN}',
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        token_type: 'Bearer'
+      }));
+      return true;
+    };
+    global.injectOidcTokens();
+
+# Test continues with authenticated state...
 ```
 
 ## Taking Screenshots
@@ -280,7 +362,15 @@ For tests that require real credentials, we recommend a secure approach:
    npm run test:e2e:oidc:credentials
    ```
 
-3. **CI Environment**:
+3. **Token-Based Authentication**:
+   - For OIDC authentication, use the token-based approach
+   - No need to store passwords in configuration files:
+   
+   ```bash
+   npm run test:e2e:oidc:token
+   ```
+   
+4. **CI Environment**:
    - When running in CI environments, use CI platform's secrets management
    - Never store real credentials in your test files
 
@@ -313,7 +403,7 @@ Follow the on-screen instructions to record your interactions with the app.
 4. **Handle loading states**: Use `waitForAnimationToEnd` or similar to wait for content to load
 5. **Test edge cases**: Test both happy paths and error scenarios
 6. **Update tests when UI changes**: Keep tests in sync with UI changes
-7. **Use test credentials**: Never use real user credentials in tests
+7. **Use token-based auth**: Prefer token injection over WebView authentication when possible
 8. **Screenshots organization**: Keep screenshots organized in subdirectories by flow
 
 ## Troubleshooting
@@ -324,10 +414,12 @@ Common issues and solutions:
 - **WebView interaction issues**: Ensure the WebView has fully loaded before interacting with it
 - **Test runs too fast**: Add waits or use `waitForAnimationToEnd` to ensure UI is ready
 - **App crashes during test**: Check logs for errors and ensure the app state is as expected
-- **System dialog issues**: Remember that system dialogs require manual interaction
+- **System dialog issues**: Use token-based authentication to avoid system dialogs
+- **OIDC token issues**: Make sure oidc-agent is running (`eval "$(oidc-agent)"`) and your profile exists
 
 ## Resources
 
 - [Maestro Documentation](https://maestro.mobile.dev/)
 - [Maestro GitHub Repository](https://github.com/mobile-dev-inc/maestro)
 - [Example Flows](https://maestro.mobile.dev/api-reference/commands)
+- [OIDC Agent](https://github.com/indigo-dc/oidc-agent)

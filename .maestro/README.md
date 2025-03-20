@@ -40,6 +40,8 @@ This directory contains Maestro flows for end-to-end testing of the OpenCloud Mo
    # This file is git-ignored and won't be committed
    ```
 
+5. For token-based OIDC tests, see [OIDC Agent Setup](./.maestro/OIDC_AGENT_SETUP.md)
+
 ## Running Tests
 
 To run a specific test flow:
@@ -67,6 +69,7 @@ TEST_SERVER_URL=https://example.com TEST_USERNAME=user TEST_PASSWORD=pass maestr
 - `03_screenshot_login.yaml`: Captures screenshots of the login process
 - `04_login_with_confirmation.yaml`: Tests login flow with manual dialog confirmation
 - `05_oidc_login.yaml`: Tests the OIDC authentication flow with WebView support (requires manual intervention)
+- `06_oidc_token_login.yaml`: Tests OIDC authentication by injecting tokens from oidc-agent (no WebView)
 
 ## System Dialogs & Manual Intervention
 
@@ -91,6 +94,13 @@ Some tests require manual intervention due to system security dialogs that canno
    ```
    - Be ready to interact with system dialogs when they appear
    - The test includes comments indicating when manual intervention is needed
+
+3. **Avoiding Manual Intervention**:
+   - Use the token injection approach with oidc-agent:
+   ```bash
+   npm run test:e2e:oidc:token
+   ```
+   - This approach bypasses WebView authentication entirely
 
 ## Test Credentials
 
@@ -119,11 +129,25 @@ env:
     file: auth_login.js
 ```
 
+## OIDC Token Injection
+
+The `06_oidc_token_login.yaml` test demonstrates a way to bypass WebView authentication by using pre-generated tokens from oidc-agent.
+
+1. Set up oidc-agent following the [OIDC Agent Setup guide](./OIDC_AGENT_SETUP.md)
+
+2. Run the test with token injection:
+   ```bash
+   npm run test:e2e:oidc:token
+   ```
+
+This bypasses the WebView authentication flow completely, making tests more reliable and faster.
+
 ## Screenshots
 
 Screenshots are saved to the `.maestro/screenshots/` directory, organized by test flow:
 - `login_flow/`: Screenshots from login flow tests
 - `oidc_flow/`: Screenshots from OIDC authentication flow tests
+- `oidc_token_flow/`: Screenshots from OIDC token injection flow tests
 - `auth_flow/`: Screenshots from authentication flow tests
 
 These directories are git-ignored to avoid committing screenshots to the repository.

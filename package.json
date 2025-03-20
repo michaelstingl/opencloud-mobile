@@ -20,6 +20,7 @@
     "test:e2e:login:confirmation": "maestro test .maestro/flows/04_login_with_confirmation.yaml",
     "test:e2e:oidc": "maestro test .maestro/flows/05_oidc_login.yaml",
     "test:e2e:oidc:credentials": "node .maestro/run-with-credentials.js .maestro/flows/05_oidc_login.yaml",
+    "test:e2e:oidc:token": "node .maestro/run-with-oidc-token.js .maestro/flows/06_oidc_token_login.yaml OpenCloudDesktop",
     "lint": "expo lint"
   },
   "dependencies": {
