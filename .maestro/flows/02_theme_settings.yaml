@@ -1,0 +1,25 @@
+appId: com.anonymous.opencloud-mobile
+---
+- launchApp
+# Navigate to Settings
+- tapOn: "Settings"
+# Check if Theme section exists
+- assertVisible: "Theme"
+# Switch to Dark Mode
+- tapOn: "Dark"
+# Verify Dark Mode is activated
+- assertVisible:
+    text: "Dark"
+    checked: true
+# Switch to Light Mode
+- tapOn: "Light"
+# Verify Light Mode is activated
+- assertVisible:
+    text: "Light"
+    checked: true
+# Switch to System Mode
+- tapOn: "System"
+# Verify System Mode is activated
+- assertVisible:
+    text: "System"
+    checked: true

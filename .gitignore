@@ -31,9 +31,16 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+.env.*
 
 # typescript
 *.tsbuildinfo
 
 app-example
 coverage/
+
+# Maestro test credentials
+.maestro/credentials.json
+.maestro/env.json
+.maestro/.env

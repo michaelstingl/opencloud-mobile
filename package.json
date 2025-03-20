@@ -13,6 +13,14 @@
     "test:fast": "jest --no-watchman --maxWorkers=4 --config jest.config.js",
     "test:coverage": "jest --coverage --config jest.config.js",
     "test:http": "jest services/api/__tests__/HttpUtil-test.ts --config jest.config.js",
+    "test:e2e": "maestro test .maestro/flows/",
+    "test:e2e:login": "maestro test .maestro/flows/01_login_screen.yaml",
+    "test:e2e:theme": "maestro test .maestro/flows/02_theme_settings.yaml",
+    "test:e2e:screenshots": "maestro test .maestro/flows/03_screenshot_login.yaml",
+    "test:e2e:login:confirmation": "maestro test .maestro/flows/04_login_with_confirmation.yaml",
+    "test:e2e:oidc": "maestro test .maestro/flows/05_oidc_login.yaml",
+    "test:e2e:oidc:credentials": "node .maestro/run-with-credentials.js .maestro/flows/05_oidc_login.yaml",
+    "test:e2e:oidc:token": "node .maestro/run-with-oidc-token.js .maestro/flows/06_oidc_token_login.yaml OpenCloudDesktop",
     "lint": "expo lint"
   },
   "dependencies": {

@@ -1,0 +1,16 @@
+appId: com.anonymous.opencloud-mobile
+---
+- launchApp
+- takeScreenshot: 
+    path: ".maestro/screenshots/login_flow/01_app_launched"
+- assertVisible: "Welcome"
+- takeScreenshot: 
+    path: ".maestro/screenshots/login_flow/02_welcome_visible"
+- assertVisible: "Connect to your server"
+- takeScreenshot: 
+    path: ".maestro/screenshots/login_flow/03_connect_instructions_visible"
+- assertVisible: 
+    text: "Connect"
+    enabled: false
+- takeScreenshot: 
+    path: ".maestro/screenshots/login_flow/04_connect_button_disabled"
