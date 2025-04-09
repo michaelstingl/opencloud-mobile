@@ -19,6 +19,8 @@ A mobile client for iOS and Android for connecting to OpenCloud servers.
    npx expo start
    ```
 
+   > **Note for Xcode 16.3+ users:** If you're using Xcode 16.3 or newer, you'll need to run `npx expo install --fix` to update modules for compatibility. See [documentation](https://michaelstingl.github.io/opencloud-mobile/docs/guides/getting-started#xcode-163-compatibility) for details.
+
 In the output, you'll find options to open the app in a:
 
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)

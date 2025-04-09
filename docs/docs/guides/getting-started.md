@@ -14,6 +14,7 @@ Before you begin, make sure you have the following installed:
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 - [Git](https://git-scm.com/)
 - [Xcode](https://developer.apple.com/xcode/) (for iOS development)
+  - Xcode 16.3+ requires specific Expo module versions - see [Compatibility Notes](#compatibility-notes) below
 - [Android Studio](https://developer.android.com/studio) (for Android development)
 
 ## Installation
@@ -160,6 +161,30 @@ npm test -- -t "test name"
 ### Viewing Logs
 
 You can view logs in the terminal where you started the development server or use the Expo dev tools.
+
+## Compatibility Notes
+
+### Xcode 16.3+ Compatibility
+
+Xcode 16.3 introduced a breaking change in LLVM 19's C++ compiler that affects Expo and React Native applications. If you're using Xcode 16.3 or later, you'll need to make sure you have compatible packages installed:
+
+- React Native 0.77+ fully supports Xcode 16.3
+- For React Native 0.76.x (which this project currently uses), you'll need patched versions of these Expo packages:
+  - `expo-device@7.0.3` or higher
+  - `expo-gl@15.0.5` or higher
+  - `expo-dev-client@5.0.18` or higher
+  - `expo-dev-menu@6.0.23` or higher
+  - `expo-dev-launcher@5.0.33` or higher
+
+To ensure you have the compatible package versions, run:
+
+```bash
+npx expo install --fix
+```
+
+This will update the affected packages to versions that are compatible with Xcode 16.3.
+
+For more information, see the [Expo changelog](https://expo.dev/changelog/xcode-16-3-patches).
 
 ## Next Steps
 
