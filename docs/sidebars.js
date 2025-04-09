@@ -39,6 +39,8 @@ module.exports = {
       items: [
         'contributing/how-to-contribute',
         'contributing/testing',
+        'contributing/e2e-testing',
+        'contributing/secrets-management',
       ],
     },
     {

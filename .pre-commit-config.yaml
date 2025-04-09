@@ -1,0 +1,36 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.5.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-yaml
+  - id: check-added-large-files
+    args: ['--maxkb=500']
+
+- repo: https://github.com/gitleaks/gitleaks
+  rev: v8.18.2
+  hooks:
+  - id: gitleaks
+
+- repo: https://github.com/zricethezav/gitleaks
+  rev: v8.18.2
+  hooks:
+  - id: gitleaks-docker
+    name: Detect hardcoded secrets
+    description: Detect hardcoded secrets using Gitleaks
+    entry: gitleaks protect --staged --verbose --redact --no-git --baseline-path gitleaks.toml
+    language: system
+    pass_filenames: false
+
+# Additional useful hooks
+- repo: https://github.com/pre-commit/mirrors-eslint
+  rev: v8.57.0
+  hooks:
+  - id: eslint
+    files: \.(js|ts|tsx)$
+    types: [file]
+    additional_dependencies:
+      - eslint@8.57.0
+      - eslint-config-expo@8.0.1
+      - typescript@5.3.3

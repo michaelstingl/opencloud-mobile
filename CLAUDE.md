@@ -14,6 +14,14 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Run tests with coverage: `npm run test:coverage`
 - Run HttpUtil tests: `npm run test:http`
 - Run tests in CI mode: `npm run test:ci`
+- Run E2E tests with Maestro: `npm run test:e2e`
+- Run specific E2E tests:
+  - Login screen: `npm run test:e2e:login`
+  - Theme settings: `npm run test:e2e:theme`
+  - Login screenshots: `npm run test:e2e:screenshots`
+  - Login with confirmation dialog: `npm run test:e2e:login:confirmation`
+  - OIDC login flow: `npm run test:e2e:oidc`
+  - OIDC login with credentials: `npm run test:e2e:oidc:credentials`
 - Lint code: `npx expo lint`
 - Format code: `prettier --write "**/*.{ts,tsx}"`
 - Check for security vulnerabilities: `npm audit`
@@ -63,7 +71,7 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
 - Aim for at least 80% coverage for critical service code
 - Use descriptive test names that explain what is being tested
 
-### Running Tests with Mocks
+### Unit & Component Testing with Jest
 
 - Run specific tests with configuration file: `npm test hooks/__tests__/useThemeColor-test.ts -- --config=jest.config.js`
 - Mock modules are defined in the `/__mocks__` directory:
@@ -76,6 +84,24 @@ OpenCloud Mobile is a cross-platform mobile client for iOS and Android that conn
     "react-native/Libraries/Utilities/useColorScheme": "<rootDir>/__mocks__/useColorSchemeMock.js"
   }
   ```
+
+### End-to-End Testing with Maestro
+
+- E2E tests using Maestro are located in the `.maestro/flows/` directory
+- Flow files are written in YAML format
+- Run all E2E tests with: `npm run test:e2e`
+- Run specific E2E tests:
+  - Login screen test: `npm run test:e2e:login`
+  - Theme settings test: `npm run test:e2e:theme`
+  - OIDC login flow test: `npm run test:e2e:oidc`
+- Maestro Studio can be used to record new tests: `maestro studio`
+- WebView testing (for OIDC authentication) is done using JavaScript injection with Maestro's `runScript` directive
+
+#### Maestro Requirements
+- Java Runtime (OpenJDK): `brew install openjdk`
+- Java in PATH: `export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"`
+- Maestro installation: `brew tap mobile-dev-inc/tap && brew install maestro`
+- For detailed setup instructions, see the `.maestro/README.md` file or the documentation at `/docs/docs/contributing/e2e-testing.md`
 
 ## API Communication
 - All HTTP requests use the unified `HttpUtil.performRequest()` method

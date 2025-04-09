@@ -1,0 +1,36 @@
+appId: com.anonymous.opencloud-mobile
+---
+- launchApp
+- takeScreenshot: ".maestro/screenshots/login_flow/01_app_launched"
+
+# Capture the welcome screen
+- tapOn: "https://your-server.com or 'demo'"
+- takeScreenshot: ".maestro/screenshots/login_flow/02_input_field_tapped"
+
+# Enter server URL
+- inputText: "https://shniq.cloud"
+- takeScreenshot: ".maestro/screenshots/login_flow/03_server_url_entered"
+
+# Connect button should be enabled
+- assertVisible: "Connect"
+- takeScreenshot: ".maestro/screenshots/login_flow/04_connect_button_enabled"
+- tapOn: "Connect"
+
+# --- MANUAL STEP REQUIRED ---
+# At this point, a system dialog appears asking for permission
+# "opencloudmobile" Wants to Use "shniq.cloud" to Sign In
+# User must manually press "Continue" to proceed
+# Adding a comment and pause to allow for manual intervention
+- extendedWaitUntil:
+    visible: "Username"
+    timeout: 30000
+    # This gives 30 seconds to manually press "Continue" on the dialog
+
+# After the dialog is confirmed, the login form appears
+- takeScreenshot: ".maestro/screenshots/login_flow/05_login_form_loaded"
+
+# Here you would enter credentials if using the automatic flow
+# - inputText: "bob"
+# - tapOn: "Password"
+# - inputText: "Hugo1234!"
+# - takeScreenshot: ".maestro/screenshots/login_flow/06_credentials_entered"

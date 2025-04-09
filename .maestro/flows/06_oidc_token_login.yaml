@@ -1,0 +1,65 @@
+appId: com.anonymous.opencloud-mobile
+env:
+  OIDC_ACCESS_TOKEN: ${OIDC_ACCESS_TOKEN}
+  OIDC_REFRESH_TOKEN: ${OIDC_REFRESH_TOKEN}
+  SERVER_URL: ${SERVER_URL}
+---
+- launchApp
+- takeScreenshot: 
+    path: ".maestro/screenshots/oidc_token_flow/01_initial_screen"
+
+# Enter server URL in text field
+- tapOn: "https://your-server.com or 'demo'"
+- inputText: "${SERVER_URL}"
+- takeScreenshot: 
+    path: ".maestro/screenshots/oidc_token_flow/02_server_url_entered"
+
+# Instead of tapping connect and going through WebView auth,
+# we'll inject our pre-generated OIDC token into the app
+- evalScript: |
+    // This is pseudo-code - actual implementation depends on how the app stores tokens
+    // You'll need to modify this to match your app's actual implementation
+    global.injectOidcTokens = function() {
+      const AsyncStorage = require('@react-native-async-storage/async-storage');
+      
+      // Current timestamp in seconds
+      const now = Math.floor(Date.now() / 1000);
+      
+      // Store tokens with appropriate expiry
+      AsyncStorage.setItem('auth_tokens', JSON.stringify({
+        access_token: '${OIDC_ACCESS_TOKEN}',
+        refresh_token: '${OIDC_REFRESH_TOKEN}',
+        expires_at: now + 3600, // Typical expiry is 1 hour
+        token_type: 'Bearer'
+      }));
+      
+      // Set authentication state
+      AsyncStorage.setItem('auth_state', JSON.stringify({
+        isAuthenticated: true,
+        server: '${SERVER_URL}'
+      }));
+      
+      return true;
+    };
+    
+    // Execute injection
+    global.injectOidcTokens();
+
+# Wait for a moment to let the token injection take effect
+- wait: 1000
+
+# Trigger app to recognize auth state change
+# This depends on your app's implementation - you might need a different approach
+- tapOn:
+    id: "refreshButton"
+    optional: true
+
+# Wait for app to process the new auth state
+- wait: 2000
+- takeScreenshot:
+    path: ".maestro/screenshots/oidc_token_flow/03_post_token_injection"
+
+# Verify successful authentication
+- assertVisible: "Files"
+- takeScreenshot:
+    path: ".maestro/screenshots/oidc_token_flow/04_authenticated_view"
