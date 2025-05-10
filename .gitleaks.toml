@@ -1,0 +1,54 @@
+# GitLeaks configuration file
+title = "OpenCloud Mobile GitLeaks Configuration"
+
+# Define additional custom secret patterns
+[[rules]]
+id = "opencloud-api-key"
+description = "OpenCloud API Key"
+regex = '''(?i)(\W|^)(oc_[a-zA-Z0-9]{32})(\W|$)'''
+tags = ["key", "API", "opencloud"]
+severity = "CRITICAL"
+
+[[rules]]
+id = "opencloud-auth-token"
+description = "OpenCloud Auth Token"
+regex = '''(?i)(\W|^)(ocauth_[a-zA-Z0-9]{64})(\W|$)'''
+tags = ["token", "API", "opencloud"]
+severity = "CRITICAL"
+
+[[rules]]
+id = "test-credentials"
+description = "Test Credentials in Non-Example Files"
+regex = '''(?i)("username"\s*:\s*"(?!.*example).*"|"password"\s*:\s*"(?!.*example).*")'''
+tags = ["credentials", "test"]
+severity = "HIGH"
+
+# Allowlist (files to exclude from scanning)
+[allowlist]
+description = "Files and paths to exclude from scanning"
+
+# Exclude examples and templates
+paths = [
+    '''\.maestro/env\.example\.json$''',
+    '''\.maestro/flows/secure_oidc_login\.yaml\.example$''',
+    '''.*\.md$''',
+    '''docs/.*''',
+    '''\.git/.*''',
+    '''node_modules/.*''',
+    '''.*\.lock$''',
+    '''package-lock\.json$'''
+]
+
+# Allow example test credentials
+regexes = [
+    '''test_username''',
+    '''test_password''',
+    '''example\.com''',
+    '''"password": "test_password"''',
+    '''"username": "test_username"'''
+]
+
+# Example test_credentials is allowed
+[[allowlist.rules]]
+id = "test-credentials"
+path = '''\.maestro/env\.example\.json$'''
